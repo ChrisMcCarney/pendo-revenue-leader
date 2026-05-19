@@ -4,24 +4,26 @@ A Cowork plugin for RVPs and sales managers. Live Salesforce data, weighted fore
 
 ---
 
-## Most pipeline reviews are built from memory
+## Your week runs on context you cannot hold in your head
 
-You walk into Monday's commit call holding three things: a screenshot from Friday, a half-finished spreadsheet, and whatever you remember from last week's 1:1s. Salesforce is the source of truth, but it is rarely the place you actually look. Your forecast is opinion dressed up as data.
+A Pendo sales leader's week is fragmented across a dozen surfaces. Salesforce holds the deal data. Granola has the call transcripts. Slack carries the in-flight conversations. Gmail buries the executive threads. Your calendar tells you where to be but not why it matters. Notes from last week's 1:1s live in three different docs. The deck for tomorrow's account review is still a blank page.
 
-The deck you build for it is off-brand. The action items you walk out with never make it back into Salesforce. By Friday you are doing it all again.
+You spend the morning stitching context together. You walk into meetings half-prepped. Action items never make it back into Salesforce. The forecast call is opinion dressed up as data. By Friday, you are doing it all again.
 
 This plugin is the alternative.
 
-## Run your week through Cowork instead
+## An operating system for the way you actually work
 
-Type `/setup` once. Fifteen minutes later, your project is scaffolded from live Salesforce: every active deal is a folder, every direct report is a coaching page, every pillar of your role is a tag. From then on, Cowork is the surface you use to plan, prep, review, and forecast.
+Type `/setup` once. Fifteen minutes later, your project is scaffolded from live Salesforce: every active deal is a folder, every direct report is a coaching page, every pillar of your role is a tag. From then on, Cowork is the single surface you use to plan your days, prep for meetings, capture what was decided, research accounts, run pipeline reviews, and reflect at the end of the week.
 
-- Monday morning starts with `/daily-plan`. A short narrative paragraph followed by an open punch list, pulled from your calendar, Slack DMs, Gmail, Tasks.md, and every active workstation. Two minutes of reading sets the day.
+- Mornings start with `/daily-plan`. A short narrative paragraph followed by an open punch list, pulled from your calendar, Slack DMs, Gmail, Tasks.md, and every active workstation. Two minutes of reading sets the day.
+- Before any meeting, `/meeting-prep` opens a short brief: the right workstation, the relevant Slack history, recent stage moves, the questions worth asking. You walk in informed, not improvising.
+- After every meeting, `/process-meetings` reads the Granola transcript, extracts decisions and action items, updates the workstation MEMORY, drops next steps onto the right person pages, and writes a two-sentence SE_Notes summary back to Salesforce. Nothing falls through.
+- For any new account engagement, `/company-research` and `/strategy-map-research` build Pendo-branded research decks that map every finding to a Pendo use case. Hours of prep work, done in minutes.
 - Pipeline calls run on `/avp-pipeline-review`. A live, interactive Cowork artifact that pulls every open opportunity for your team, weighs them at 100% commit, 80% forecast, and 25% upside, and calls out the deals where MEDDPICC is thin or pushes are stacking up. Numbers refresh on reload. No more screenshots.
-- After every meeting, `/process-meetings` opens the Granola transcript, extracts decisions and action items, updates the workstation MEMORY, drops next steps onto the right person pages, and writes a two-sentence SE_Notes summary back to Salesforce.
 - Friday wraps with `/week-review`. Shipped versus planned. Pillar balance. What slipped and why. The retrospective writes itself.
 
-By the time you sit down with your manager for your forecast call, you have a defensible educated-edge number, a list of risks named by deal, and the next-step commitments for every one of them.
+By the time you sit down with your manager for your forecast call, you have a defensible educated-edge number, a list of risks named by deal, and the next-step commitments for every one of them. And you got there without context-switching across six tabs.
 
 ## What you get when you install
 
