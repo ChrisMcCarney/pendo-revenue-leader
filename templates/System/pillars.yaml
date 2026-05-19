@@ -1,0 +1,80 @@
+# Strategic Pillars Configuration
+#
+# Pillars are your main focus areas: how you carve up your role thematically.
+# These are NOT time-bound (like quarterly goals). They represent ongoing areas
+# of responsibility that typically stay consistent for 6-12+ months.
+#
+# Most Pendo roles have 3 pillars. The /setup wizard captures yours and writes
+# the names, descriptions, and keywords below. You can edit this file directly
+# at any time.
+#
+# Pendo's company values (Pank Pillars) are different: they live in
+# 00_Resources/pendo-values.md.
+#
+# See pillars.example.yaml in this folder for a populated example.
+
+pillars:
+  - id: pillar_one
+    name: "{pillar_1_name}"
+    description: "{pillar_1_description}"
+    keywords:
+      # Comma-separated keyword list captured during /setup.
+      # Used by daily-plan and process-meetings to infer pillar from task text.
+      - "{pillar_1_keyword_1}"
+      - "{pillar_1_keyword_2}"
+      - "{pillar_1_keyword_3}"
+
+  - id: pillar_two
+    name: "{pillar_2_name}"
+    description: "{pillar_2_description}"
+    keywords:
+      - "{pillar_2_keyword_1}"
+      - "{pillar_2_keyword_2}"
+      - "{pillar_2_keyword_3}"
+
+  - id: pillar_three
+    name: "{pillar_3_name}"
+    description: "{pillar_3_description}"
+    keywords:
+      - "{pillar_3_keyword_1}"
+      - "{pillar_3_keyword_2}"
+      - "{pillar_3_keyword_3}"
+
+# Priority limits (max active tasks per priority level)
+priority_limits:
+  P0: 3   # Critical/urgent
+  P1: 5   # Important
+  P2: 10  # Normal
+
+# -----------------------------------------------------------------------------
+# Suggested pillar starting points by role
+# -----------------------------------------------------------------------------
+#
+# Customer Engineer (CE) / Sales Engineer (SE):
+#   1. Technical wins         (demos, evaluations, POCs, integrations)
+#   2. Deal partnership       (deal strategy with ADs, pipeline, MEDDPICC)
+#   3. Enablement and content (AI, enablement, content, presentations)
+#
+# Account Director (AD):
+#   1. Pipeline Coverage      (top-of-funnel, qualified deals, gen pipe)
+#   2. Deal Execution         (forecast accuracy, deal velocity, close rate)
+#   3. Strategic Accounts     (account planning, exec relationships, expansion)
+#
+# Sales Director / Sales Leader / RVP:
+#   1. Team Performance       (rep ramp, coaching, individual quota attainment)
+#   2. Pipeline Health        (coverage, hygiene, forecast accuracy)
+#   3. Strategic Influence    (cross-functional partnership, region strategy)
+#
+# Customer Success Manager (CSM):
+#   1. Adoption Health        (usage, value realisation, customer outcomes)
+#   2. Renewal Risk           (renewal motion, at-risk accounts, NRR)
+#   3. Expansion              (upsell, cross-sell, advocacy)
+#
+# Marketing:
+#   1. Demand Generation      (campaigns, MQLs, attribution)
+#   2. Positioning            (messaging, brand, competitive)
+#   3. Enablement             (sales support, content, decks)
+#
+# Pick one of the above as a starting point or define your own. Three is
+# usually right. Two feels narrow. Four+ feels like you don't know what
+# matters.

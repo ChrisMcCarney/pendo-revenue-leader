@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Pendo FY27 — Slide template</title>
+<link rel="stylesheet" href="../../colors_and_type.css"/>
+<style>html, body { margin: 0; background: #000; }</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="deck-stage.js"></script>
+</head>
+<body>
+<deck-stage width="1920" height="1080">
+  <div id="s1"></div>
+  <div id="s2"></div>
+  <div id="s3"></div>
+  <div id="s4"></div>
+  <div id="s5"></div>
+  <div id="s6"></div>
+  <div id="s7"></div>
+  <div id="s8"></div>
+  <div id="s9"></div>
+  <div id="s10"></div>
+</deck-stage>
+<script type="text/babel" src="_common.jsx"></script>
+<script type="text/babel" src="CoverSlide.jsx"></script>
+<script type="text/babel" src="StatementLightSlide.jsx"></script>
+<script type="text/babel" src="SectionDividerSlide.jsx"></script>
+<script type="text/babel" src="StatCalloutSlide.jsx"></script>
+<script type="text/babel" src="AgendaSlide.jsx"></script>
+<script type="text/babel" src="FeatureSlide.jsx"></script>
+<script type="text/babel" src="PankiverseHeroSlide.jsx"></script>
+<script type="text/babel" src="StatSlide.jsx"></script>
+<script type="text/babel" src="QuoteSlide.jsx"></script>
+<script type="text/babel" src="ClosingSlide.jsx"></script>
+<script type="text/babel">
+  ReactDOM.createRoot(document.getElementById("s1")).render(<CoverSlide />);
+  ReactDOM.createRoot(document.getElementById("s2")).render(<StatementLightSlide />);
+  ReactDOM.createRoot(document.getElementById("s3")).render(<SectionDividerSlide />);
+  ReactDOM.createRoot(document.getElementById("s4")).render(<StatCalloutSlide />);
+  ReactDOM.createRoot(document.getElementById("s5")).render(<AgendaSlide />);
+  ReactDOM.createRoot(document.getElementById("s6")).render(<FeatureSlide />);
+  ReactDOM.createRoot(document.getElementById("s7")).render(<PankiverseHeroSlide />);
+  ReactDOM.createRoot(document.getElementById("s8")).render(<StatSlide />);
+  ReactDOM.createRoot(document.getElementById("s9")).render(<QuoteSlide />);
+  ReactDOM.createRoot(document.getElementById("s10")).render(<ClosingSlide />);
+</script>
+</body>
+</html>

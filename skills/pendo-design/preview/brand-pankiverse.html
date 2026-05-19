@@ -1,0 +1,188 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Pankiverse</title>
+<link rel="stylesheet" href="_preview.css">
+<style>
+  .pk-stack { display: flex; flex-direction: column; gap: 14px; }
+  .pk-row { display: grid; gap: 10px; }
+  .pk-row.half { grid-template-columns: 1fr 1fr; }
+  .pk-row.twothird { grid-template-columns: 2fr 1fr; }
+  .pk-row.five { grid-template-columns: repeat(5, 1fr); }
+
+  /* Pankiverse frame: rounded panel filled with a Pank backdrop. */
+  .pk-frame {
+    position: relative;
+    border-radius: 14px;
+    background-size: cover;
+    background-position: center;
+  }
+  .pk-frame.clip { overflow: hidden; }
+  .pk-frame.bleed { overflow: visible; }
+
+  /* Shape presets */
+  .pk-hero     { aspect-ratio: 16 / 9; }
+  .pk-wide     { aspect-ratio: 21 / 9; }
+  .pk-tile     { aspect-ratio: 1 / 1; }
+  .pk-tall     { aspect-ratio: 3 / 4; }
+
+  /* UI overlay sits in-frame by default (contained) */
+  .ui-in {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .ui-in img { max-width: 100%; max-height: 100%; width: auto; height: auto; display: block; }
+
+  /* Break-out: UI overflows past the frame on one side */
+  .ui-break {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .ui-break img { display: block; }
+
+  /* Solo UI on page background (no Pank backdrop — many UIs have glow baked in) */
+  .ui-solo {
+    padding: 16px;
+    background: #EDEEE7;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 180px;
+  }
+  .ui-solo.dark { background: #000; }
+  .ui-solo img { max-width: 100%; max-height: 260px; width: auto; height: auto; display: block; }
+
+  /* Accent: tight crop with Pank behind a small UI snippet */
+  .pk-accent {
+    position: relative;
+    border-radius: 14px;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    padding: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 150px;
+  }
+  .pk-accent img { max-width: 100%; max-height: 110px; width: auto; height: auto; display: block; }
+
+  /* Source grid */
+  .pk-source {
+    border-radius: 8px;
+    aspect-ratio: 16 / 9;
+    background-size: cover;
+    background-position: center;
+  }
+
+  .label-sub { font-family: var(--font-mono); font-size: 10px; color: #7C7C79; margin-top: -4px; line-height: 1.5; }
+  .section-label { font-family: var(--font-mono); font-size: 10px; color: #7C7C79; text-transform: uppercase; letter-spacing: 0.18em; margin-top: 4px; }
+
+  /* Per-frame backgrounds */
+  .bg-1 { background-image: url("../assets/pankiverse/pankiverse-01.png"); }
+  .bg-2 { background-image: url("../assets/pankiverse/pankiverse-02.png"); }
+  .bg-3 { background-image: url("../assets/pankiverse/pankiverse-03.png"); }
+  .bg-4 { background-image: url("../assets/pankiverse/pankiverse-04.png"); }
+  .bg-5 { background-image: url("../assets/pankiverse/pankiverse-05.png"); }
+</style></head>
+<body>
+<div class="card">
+  <div class="label">Pankiverse · flexible Pank container</div>
+  <div class="label-sub">
+    A Pank backdrop that holds product UI. Three modes:
+    <b>contained</b> (UI fits inside the frame),
+    <b>break-out</b> (UI overflows past the edge),
+    <b>accent</b> (small Pank crop behind a tight UI snippet).
+    Never overlay marketing copy on the Pankiverse itself.
+  </div>
+
+  <div class="pk-stack" style="margin-top: 8px;">
+
+    <!-- 1. Contained, large — UI sits inside the Pank frame -->
+    <div class="section-label">Contained · UI fits inside the frame</div>
+    <div class="pk-frame pk-hero bg-2 clip">
+      <div class="ui-in">
+        <img src="../assets/pankiverse/ui-listen.png" alt="Listen panel">
+      </div>
+    </div>
+
+    <!-- 2. Break-out right — tall portrait with UI extending past the right edge -->
+    <div class="section-label">Break-out · UI overflows the frame</div>
+    <div class="pk-row twothird">
+      <div class="pk-frame pk-hero bg-4 bleed" style="position:relative;">
+        <!-- the bg still clips to the rounded frame behind -->
+        <div style="position:absolute; inset:0; border-radius:14px; overflow:hidden; background: inherit; background-image: url('../assets/pankiverse/pankiverse-04.png'); background-size:cover; background-position:center;"></div>
+        <!-- UI: larger than frame, anchored so it juts out the right -->
+        <div class="ui-break" style="top:50%; left:10%; right:-14%; transform:translateY(-50%);">
+          <img src="../assets/pankiverse/ui-product-analytics.png" alt="Product analytics" style="width:100%; filter: drop-shadow(0 10px 24px rgba(24,24,24,0.18));">
+        </div>
+      </div>
+      <div class="pk-frame pk-hero bg-3 clip">
+        <div class="ui-in" style="padding: 14px;">
+          <img src="../assets/pankiverse/ui-retention-rate.png" alt="Retention rate" style="max-width:90%;">
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Break-out bottom — square tile with UI popping out the bottom -->
+    <div class="pk-row half">
+      <div class="pk-frame pk-tile bg-5 bleed" style="position:relative;">
+        <div style="position:absolute; inset:0; border-radius:14px; overflow:hidden; background-image: url('../assets/pankiverse/pankiverse-05.png'); background-size:cover; background-position:center;"></div>
+        <div class="ui-break" style="left:8%; right:8%; top:35%; bottom:-15%;">
+          <img src="../assets/pankiverse/ui-orchestrate.png" alt="Orchestrate flow" style="width:100%; filter: drop-shadow(0 10px 24px rgba(24,24,24,0.18));">
+        </div>
+      </div>
+      <div class="pk-frame pk-tile bg-1 clip">
+        <div class="ui-in">
+          <img src="../assets/pankiverse/ui-integrations.png" alt="Integrations">
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Accent row — small Pank crops behind tight UI snippets -->
+    <div class="section-label">Accent · small Pank crops behind snippets</div>
+    <div class="pk-row half">
+      <div class="pk-accent bg-2">
+        <img src="../assets/pankiverse/ui-rageprompt-rate.png" alt="Rage prompt rate">
+      </div>
+      <div class="pk-accent bg-4">
+        <img src="../assets/pankiverse/ui-unique-users.png" alt="Unique users">
+      </div>
+    </div>
+
+    <!-- 5. Solo UI — no Pankiverse behind, for UIs with their own glow -->
+    <div class="section-label">Solo · UIs with glow baked in (no Pank backdrop needed)</div>
+    <div class="pk-row half">
+      <div class="ui-solo">
+        <img src="../assets/pankiverse/ui-agent-analytics.png" alt="Agent analytics">
+      </div>
+      <div class="ui-solo">
+        <img src="../assets/pankiverse/ui-predict.png" alt="Predict">
+      </div>
+    </div>
+
+    <!-- 6. Wide banner with contained UI -->
+    <div class="section-label">Wide banner</div>
+    <div class="pk-frame pk-wide bg-3 clip">
+      <div class="ui-in" style="padding: 20px;">
+        <img src="../assets/pankiverse/ui-sentiment.png" alt="Sentiment" style="max-height: 100%;">
+      </div>
+    </div>
+
+    <!-- Sources -->
+    <div class="section-label">Approved Pank source images · 1 → 5</div>
+    <div class="pk-row five">
+      <div class="pk-source bg-1"></div>
+      <div class="pk-source bg-2"></div>
+      <div class="pk-source bg-3"></div>
+      <div class="pk-source bg-4"></div>
+      <div class="pk-source bg-5"></div>
+    </div>
+  </div>
+</div>
+</body></html>

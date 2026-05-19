@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<script type="application/json" id="cowork-artifact-meta">
+{
+  "name": "{{ARTIFACT_NAME}}",
+  "schemaVersion": 1,
+  "description": "{{ARTIFACT_DESCRIPTION}}",
+  "mcpTools": ["{{SOQL_TOOL}}"],
+  "mcpServerNames": ["Salesforce Prod"]
+}
+</script>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{DASHBOARD_TITLE}}</title>
+<style>
+/* ==========================================================================
+   Pendo FY27 brand tokens (subset, inlined for the artifact sandbox)
+   Mirror of pendo-design/colors_and_type.css
+   ========================================================================== */
+:root {
+  color-scheme: dark;
+
+  --color-pendo-pink: #FF4876;
+  --color-black: #000000;
+  --color-graphite: #303030;
+  --color-light-mode: #EDEEE7;
+  --color-white: #FFFFFF;
+
+  --color-pink-1: #FF9ED7;
+  --color-pink-2: #FE82CE;
+  --color-pink-3: #FD6AA5;
+  --color-pink-5: #D80574;
+  --color-pink-7: #97127A;
+
+  --color-neutral-1: #C7C8C2;
+  --color-neutral-2: #A1A29E;
+  --color-neutral-3: #7C7C79;
+  --color-neutral-4: #565655;
+  --color-neutral-5: #181818;
+
+  /* Dark-mode semantic */
+  --bg: #000000;
+  --bg-card: #121212;
+  --bg-elevated: #181818;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A1A29E;
+  --text-muted: #7C7C79;
+  --border: #303030;
+  --border-subtle: #181818;
+
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Sora", "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --tracking-tight: -0.02em;
+  --tracking-eyebrow: 0.22em;
+
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-pill: 999px;
+
+  --shadow-pink-glow: 0 0 0 4px rgba(255, 72, 118, 0.18);
+
+  --gradient-top-glow: radial-gradient(ellipse at 0% 0%, rgba(216, 5, 116, 0.55) 0%, rgba(151, 18, 122, 0.30) 25%, rgba(0, 0, 0, 0) 60%);
+  --gradient-pink-bar: linear-gradient(90deg, #FF9ED7 0%, #FF4876 50%, #97127A 100%);
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Web fonts loaded from Google Fonts when fonts/ is not co-located. */
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.page {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 24px;
+  position: relative;
+}
+
+.page::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 60%;
+  height: 320px;
+  background: var(--gradient-top-glow);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page > * { position: relative; z-index: 1; }
+
+/* ==========================================================================
+   Header
+   ========================================================================== */
+.header {
+  background: var(--bg-card);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border);
+  padding: 28px 32px;
+  margin-bottom: 16px;
+}
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+.eyebrow {
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-eyebrow);
+  color: var(--color-pendo-pink);
+  display: inline-block;
+  margin-bottom: 12px;
+}
+.header h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 1.05;
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-primary);
+}
+.header .sub {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 8px;
+}
+.pink-rule {
+  display: inline-block;
+  width: 44px; height: 5px;
+  background: var(--color-pendo-pink);
+  border-radius: 2px;
+  margin-bottom: 12px;
+}
+.user-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border: 1.5px solid var(--color-pendo-pink);
+  color: var(--color-pendo-pink);
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: transparent;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Tabs
+   ========================================================================== */
+.tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.tab {
+  padding: 14px 20px;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  border: none;
+  background: transparent;
+  border-bottom: 2px solid transparent;
+  transition: color var(--dur-fast, 140ms) var(--ease-out),
+              border-color var(--dur-fast, 140ms) var(--ease-out);
+}
+.tab.active {
+  color: var(--color-pendo-pink);
+  border-bottom-color: var(--color-pendo-pink);
+}
+.tab:hover:not(.active) { color: var(--text-primary); }
+.tab.hidden { display: none; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ==========================================================================
+   Edge box (hero)
+   ========================================================================== */
+.edge-box {
+  background: var(--bg-card);
+  border: 1.5px solid var(--color-pendo-pink);
+  border-radius: var(--radius-xl);
+  padding: 28px 32px;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.edge-box::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: var(--gradient-pink-bar);
+}
+.edge-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 32px;
+  align-items: start;
+}
+.edge-value {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 56px;
+  color: var(--color-pendo-pink);
+  margin: 8px 0 8px;
+  letter-spacing: var(--tracking-tight);
+  line-height: 1;
+}
+.edge-math {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+.edge-narrative {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  line-height: 1.65;
+}
+.edge-narrative .branch {
+  display: block;
+  padding-left: 16px;
+  color: var(--text-muted);
+}
+.edge-team-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.edge-team-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+}
+.etc-eyebrow {
+  font-weight: 700;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-eyebrow);
+  color: var(--color-pendo-pink);
+  margin-bottom: 6px;
+}
+.etc-value {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 24px;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+.etc-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   Metrics
+   ========================================================================== */
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.metric {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  text-align: left;
+}
+.metric-label {
+  font-weight: 700;
+  font-size: 10px;
+  color: var(--color-pendo-pink);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-eyebrow);
+  margin-bottom: 8px;
+}
+.metric-value {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 28px;
+  margin-bottom: 4px;
+  color: var(--text-primary);
+  letter-spacing: var(--tracking-tight);
+}
+.m-call .metric-value { color: var(--color-pendo-pink); }
+.metric-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   Section cards
+   ========================================================================== */
+.section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 16px;
+}
+.sec-title {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.badge-count {
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  font-size: 11px;
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  border: 1px solid var(--border);
+}
+
+/* ==========================================================================
+   Category headers (Floor / Forecast / Upside)
+   ========================================================================== */
+.cat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  margin-top: 16px;
+  margin-bottom: 8px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+}
+.cat-header .cat-title {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-eyebrow);
+  color: var(--color-pendo-pink);
+}
+.cat-math-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==========================================================================
+   Tables
+   ========================================================================== */
+table { width: 100%; border-collapse: collapse; }
+th {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--color-pendo-pink);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-eyebrow);
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  white-space: nowrap;
+}
+td {
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 12px;
+  vertical-align: top;
+  color: var(--text-primary);
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255, 255, 255, 0.03); }
+.amt {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* ==========================================================================
+   MEDDPICC chips - filled = covered (neutral, calm); missing = pink outline (alert)
+   ========================================================================== */
+.medc-row { display: flex; flex-wrap: wrap; gap: 3px; }
+.medc {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px; height: 20px;
+  border-radius: var(--radius-sm, 4px);
+  font-size: 10px;
+  font-weight: 700;
+  cursor: default;
+  font-family: var(--font-sans);
+}
+.medc.filled {
+  background: var(--color-neutral-4);
+  color: var(--color-light-mode);
+}
+.medc.missing {
+  background: transparent;
+  color: var(--color-pendo-pink);
+  border: 1.5px solid var(--color-pendo-pink);
+}
+
+/* ==========================================================================
+   Risk chips - all pendo-pill style, differentiated by fill intensity
+   ========================================================================== */
+.risk {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 10px;
+  font-weight: 700;
+  margin: 1px;
+  white-space: nowrap;
+  letter-spacing: 0.06em;
+}
+.r-push   { background: var(--color-pink-5); color: var(--color-white); }
+.r-close  { background: var(--color-pendo-pink); color: var(--color-white); }
+.r-medc   { background: var(--color-pink-3); color: var(--color-white); }
+.r-nostep { background: var(--color-neutral-4); color: var(--color-light-mode); }
+.clean {
+  color: var(--color-neutral-2);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   Category badges (deal forecast category labels)
+   ========================================================================== */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.b-Commit   { background: var(--color-pendo-pink); color: var(--color-white); }
+.b-Forecast { background: var(--color-pink-7);     color: var(--color-white); }
+.b-Upside   { background: var(--color-neutral-4);  color: var(--color-light-mode); }
+.b-Pipeline { background: var(--color-neutral-5);  color: var(--color-neutral-2); }
+.b-Omitted  { background: transparent;             color: var(--color-neutral-3); border: 1px solid var(--color-neutral-4); }
+
+/* ==========================================================================
+   Copyable text block
+   ========================================================================== */
+.copy-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.copy-area {
+  width: 100%;
+  min-height: 220px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.7;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  resize: vertical;
+  outline: none;
+}
+.copy-area:focus {
+  border-color: var(--color-pendo-pink);
+  box-shadow: var(--shadow-pink-glow);
+}
+.copy-btn {
+  padding: 8px 18px;
+  background: var(--color-pendo-pink);
+  color: var(--color-white);
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background var(--dur-fast, 140ms) var(--ease-out),
+              transform var(--dur-fast, 140ms) var(--ease-out);
+}
+.copy-btn:hover { background: #E53B66; }
+.copy-btn:active { transform: scale(0.985); background: var(--color-pink-5); }
+.copy-btn.copied { background: var(--color-neutral-4); }
+
+/* ==========================================================================
+   Next steps preview
+   ========================================================================== */
+.ns-preview {
+  font-size: 11px;
+  color: var(--text-secondary);
+  max-width: 220px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-height: 1.45;
+}
+
+/* ==========================================================================
+   Loading + error states
+   ========================================================================== */
+.loading {
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--text-secondary);
+}
+.loading-label {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  letter-spacing: var(--tracking-tight);
+}
+.loading-dot {
+  display: inline-block;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--color-pendo-pink);
+  margin: 0 3px;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+.loading-dot:nth-child(2) { animation-delay: .2s; }
+.loading-dot:nth-child(3) { animation-delay: .4s; }
+@keyframes pulse {
+  0%,80%,100% { opacity: .3; transform: scale(.8); }
+  40% { opacity: 1; transform: scale(1); }
+}
+.err {
+  background: rgba(216, 5, 116, 0.15);
+  border: 1px solid var(--color-pink-5);
+  color: var(--color-pendo-pink);
+  padding: 16px 20px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+}
+.empty {
+  text-align: center;
+  padding: 24px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+.footer {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-muted);
+  padding: 16px 0 8px;
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 900px) {
+  .metrics { grid-template-columns: 1fr 1fr; }
+  .edge-grid { grid-template-columns: 1fr; }
+  .edge-team-cards { grid-template-columns: 1fr 1fr; }
+  .header h1 { font-size: 24px; }
+  .edge-value { font-size: 40px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <div id="loading" class="loading">
+    <div class="loading-label">Loading pipeline data</div>
+    <span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span>
+  </div>
+
+  <div id="app" style="display:none">
+
+    <!-- HEADER -->
+    <div class="header">
+      <div class="header-row">
+        <div>
+          <span class="eyebrow">{{QUARTER_LABEL}} pipeline review</span>
+          <div class="pink-rule"></div>
+          <h1>{{DASHBOARD_TITLE}}</h1>
+          <div class="sub" id="hdr-sub">{{QUARTER_LABEL}} · {{QUARTER_DATES}}</div>
+        </div>
+        <div class="user-badge">{{USER_NAME}} · {{USER_TITLE}}</div>
+      </div>
+    </div>
+
+    <!-- TABS (no emojis, sentence case) -->
+    <div class="tabs">
+      <button class="tab active" id="tab-btn-rollup" onclick="switchTab('rollup')">{{ROLLUP_LABEL}}</button>
+      <button class="tab" id="tab-btn-team1" onclick="switchTab('team1')">{{TEAM1_NAME}} · {{TEAM1_MANAGER}}</button>
+      <button class="tab" id="tab-btn-team2" onclick="switchTab('team2')">{{TEAM2_NAME}} · {{TEAM2_MANAGER}}</button>
+      <button class="tab" id="tab-btn-methodology" onclick="switchTab('methodology')" style="margin-left:auto">Methodology</button>
+    </div>
+
+    <!-- ROLLUP TAB -->
+    <div class="tab-content active" id="tab-rollup">
+      <div class="edge-box" id="edge-box">Loading</div>
+      <div class="metrics" id="rollup-metrics"></div>
+      <div class="section">
+        <div class="copy-row">
+          <div class="sec-title" style="margin-bottom:0">Rollup text</div>
+          <button class="copy-btn" id="copy-rollup-btn" onclick="doCopy('copy-rollup-btn','avp-text')">Copy</button>
+        </div>
+        <textarea class="copy-area" id="avp-text" spellcheck="false"></textarea>
+      </div>
+      <div class="section">
+        <div class="sec-title">Combined risk flags <span class="badge-count" id="risk-ct">0</span></div>
+        <div id="risk-body"></div>
+      </div>
+    </div>
+
+    <!-- TEAM 1 TAB -->
+    <div class="tab-content" id="tab-team1">
+      <div class="metrics" id="team1-metrics"></div>
+      <div class="section">
+        <div class="copy-row">
+          <div class="sec-title" style="margin-bottom:0">{{TEAM1_NAME}} text <span style="font-size:11px;color:var(--text-muted);font-weight:400;letter-spacing:normal;text-transform:none">- {{TEAM1_MANAGER}}</span></div>
+          <button class="copy-btn" id="copy-team1-btn" onclick="doCopy('copy-team1-btn','team1-text')">Copy</button>
+        </div>
+        <textarea class="copy-area" id="team1-text" spellcheck="false"></textarea>
+      </div>
+      <div class="section" id="team1-deals"></div>
+    </div>
+
+    <!-- TEAM 2 TAB -->
+    <div class="tab-content" id="tab-team2">
+      <div class="metrics" id="team2-metrics"></div>
+      <div class="section">
+        <div class="copy-row">
+          <div class="sec-title" style="margin-bottom:0">{{TEAM2_NAME}} text <span style="font-size:11px;color:var(--text-muted);font-weight:400;letter-spacing:normal;text-transform:none">- {{TEAM2_MANAGER}}</span></div>
+          <button class="copy-btn" id="copy-team2-btn" onclick="doCopy('copy-team2-btn','team2-text')">Copy</button>
+        </div>
+        <textarea class="copy-area" id="team2-text" spellcheck="false"></textarea>
+      </div>
+      <div class="section" id="team2-deals"></div>
+    </div>
+
+    <!-- METHODOLOGY TAB -->
+    <div class="tab-content" id="tab-methodology">
+
+      <div class="section">
+        <span class="eyebrow">How this dashboard is calculated</span>
+        <div class="pink-rule"></div>
+        <h2 style="font-family:var(--font-display);font-weight:700;font-size:24px;line-height:1.1;letter-spacing:var(--tracking-tight);color:var(--text-primary);margin:8px 0 16px">A read on the quarter, not a forecast</h2>
+        <p style="color:var(--text-secondary);font-size:14px;line-height:1.65;max-width:780px">
+          This view sits on top of live Salesforce opportunity data scoped to the people on your team. It does not change anything in Salesforce. It is a working surface for weekly pipeline calls: a weighted math call from the forecast categories your reps have set, an educated-edge call that pulls back on deals carrying multiple risk signals, and a copyable plain-text summary you can paste into Slack or email.
+        </p>
+      </div>
+
+      <div class="section">
+        <span class="eyebrow">Weighted math call</span>
+        <div class="pink-rule"></div>
+        <h3 style="font-family:var(--font-display);font-weight:700;font-size:18px;color:var(--text-primary);margin:8px 0 12px">Floor 100% + Forecast 80% + Upside 25%</h3>
+        <p style="color:var(--text-secondary);font-size:14px;line-height:1.65;max-width:780px;margin-bottom:16px">
+          Each open opportunity with a close date inside the current fiscal quarter is bucketed by its Salesforce Sales_Forecast_Category__c value, then weighted:
+        </p>
+        <table>
+          <thead>
+            <tr><th>Category</th><th>Weight</th><th>Eligibility</th><th>Rationale</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="badge b-Commit">Commit</span></td>
+              <td class="amt">100%</td>
+              <td>All commit deals</td>
+              <td>Counted at face value. This is the floor.</td>
+            </tr>
+            <tr>
+              <td><span class="badge b-Forecast">Forecast</span></td>
+              <td class="amt">80%</td>
+              <td>All forecast deals</td>
+              <td>Discounts the optimism bias most reps carry in this category.</td>
+            </tr>
+            <tr>
+              <td><span class="badge b-Upside">Upside</span></td>
+              <td class="amt">25%</td>
+              <td>Net ARR ≥ $75k only</td>
+              <td>Smaller upside deals are excluded to avoid noise. Larger ones get a token weight.</td>
+            </tr>
+          </tbody>
+        </table>
+        <pre style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px 16px;margin-top:16px;font-family:var(--font-mono);font-size:12px;color:var(--text-primary);line-height:1.6;overflow-x:auto">Math call = Σ(Commit × 1.0) + Σ(Forecast × 0.8) + Σ(Upside ≥ $75k × 0.25)</pre>
+      </div>
+
+      <div class="section">
+        <span class="eyebrow">Educated edge call</span>
+        <div class="pink-rule"></div>
+        <h3 style="font-family:var(--font-display);font-weight:700;font-size:18px;color:var(--text-primary);margin:8px 0 12px">Math call minus a 50% haircut on flagged deals</h3>
+        <p style="color:var(--text-secondary);font-size:14px;line-height:1.65;max-width:780px;margin-bottom:12px">
+          Any deal carrying two or more risk flags (see below) has its weighted contribution cut in half. The resulting number is the edge call: a more conservative read that takes deal hygiene into account, not just the rep's category placement.
+        </p>
+        <pre style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px 16px;font-family:var(--font-mono);font-size:12px;color:var(--text-primary);line-height:1.6;overflow-x:auto">Edge call = Math call - Σ(deals_with_2+_flags × weighted_contribution × 0.5)</pre>
+        <p style="color:var(--text-muted);font-size:12px;line-height:1.6;margin-top:12px;max-width:780px">
+          The risk-adjustment line under the edge call value shows the size of this discount and how many deals contributed to it.
+        </p>
+      </div>
+
+      <div class="section">
+        <span class="eyebrow">Risk flags</span>
+        <div class="pink-rule"></div>
+        <h3 style="font-family:var(--font-display);font-weight:700;font-size:18px;color:var(--text-primary);margin:8px 0 12px">Four signals applied per deal</h3>
+        <table>
+          <thead>
+            <tr><th>Flag</th><th>Trigger</th><th>What it usually means</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="risk r-push">Pushed Nx</span></td>
+              <td>PushCount ≥ 5</td>
+              <td>Close date has slipped five or more times. Strong signal of a stalled deal.</td>
+            </tr>
+            <tr>
+              <td><span class="risk r-close">Closes in Nd</span></td>
+              <td>CloseDate within next 30 days</td>
+              <td>Near-term deals carry the most forecast risk. Surfaces them for attention.</td>
+            </tr>
+            <tr>
+              <td><span class="risk r-medc">MEDDPICC N/8</span></td>
+              <td>Four or more MEDDPICC fields empty</td>
+              <td>Qualification gap. Hard to call confidence on deals with thin discovery.</td>
+            </tr>
+            <tr>
+              <td><span class="risk r-nostep">No next steps</span></td>
+              <td>Next_Steps__c and NextStep both blank or under 5 characters</td>
+              <td>No documented forward motion. Often a coaching opportunity in the 1:1.</td>
+            </tr>
+          </tbody>
+        </table>
+        <p style="color:var(--text-muted);font-size:12px;line-height:1.6;margin-top:12px;max-width:780px">
+          A deal counts toward the edge-call haircut only when it carries two or more of the four flags. Single-flag deals are surfaced in the table but do not change the math.
+        </p>
+      </div>
+
+      <div class="section">
+        <span class="eyebrow">MEDDPICC mapping</span>
+        <div class="pink-rule"></div>
+        <h3 style="font-family:var(--font-display);font-weight:700;font-size:18px;color:var(--text-primary);margin:8px 0 12px">Eight Salesforce fields, two of them lookups</h3>
+        <table>
+          <thead>
+            <tr><th>Letter</th><th>Concept</th><th>Salesforce field</th><th>Check</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><span class="medc filled">M</span></td><td>Metrics</td><td><code>Metrics__c</code></td><td>Stripped-HTML length</td></tr>
+            <tr><td><span class="medc filled">E</span></td><td>Economic Buyer</td><td><code>Economic_Buyer__c</code></td><td>Non-null lookup</td></tr>
+            <tr><td><span class="medc filled">D</span></td><td>Decision Criteria</td><td><code>Decision_Criteria__c</code></td><td>Stripped-HTML length</td></tr>
+            <tr><td><span class="medc filled">D</span></td><td>Decision Process</td><td><code>Decision_Process_Actual__c</code></td><td>Stripped-HTML length</td></tr>
+            <tr><td><span class="medc filled">P</span></td><td>Paper Process</td><td><code>Paper_Process__c</code></td><td>Stripped-HTML length</td></tr>
+            <tr><td><span class="medc filled">I</span></td><td>Identified Pain</td><td><code>Identified_Pain__c</code></td><td>Stripped-HTML length</td></tr>
+            <tr><td><span class="medc filled">C</span></td><td>Champion</td><td><code>Champion_Actual__c</code></td><td>Non-null lookup</td></tr>
+            <tr><td><span class="medc filled">C</span></td><td>Competition</td><td><code>Competition__c</code></td><td>Stripped-HTML length</td></tr>
+          </tbody>
+        </table>
+        <p style="color:var(--text-muted);font-size:12px;line-height:1.6;margin-top:12px;max-width:780px">
+          Filled chips show fields the rep has captured. Pink-outlined chips show gaps. Rich-text fields are HTML-stripped before the length check so an empty <code>&lt;p&gt;&lt;/p&gt;</code> still counts as missing.
+        </p>
+      </div>
+
+      <div class="section">
+        <span class="eyebrow">Scope and data source</span>
+        <div class="pink-rule"></div>
+        <table>
+          <tbody>
+            <tr><td style="font-weight:600;width:200px">Pipeline scope</td><td>Open opportunities owned by reps in your team configuration, with a close date inside the current fiscal quarter.</td></tr>
+            <tr><td style="font-weight:600">Team configuration</td><td>Read from <code>System/team.yaml</code> in RVP mode, or <code>System/avp-teams.yaml</code> in AVP mode. Skill prompts on first run to surface which mode you are in.</td></tr>
+            <tr><td style="font-weight:600">Fiscal calendar</td><td>Quarter labels computed at runtime from <code>fiscal_year_start_month</code> in <code>System/user-profile.yaml</code>. Pendo default is February.</td></tr>
+            <tr><td style="font-weight:600">Refresh behaviour</td><td>The artifact re-queries Salesforce every time it loads. There is no cached data: closing and reopening the artifact gives you the latest numbers.</td></tr>
+            <tr><td style="font-weight:600">Source of truth</td><td>Salesforce. This dashboard reads only; nothing in Salesforce is changed by viewing or copying from it.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <span class="eyebrow">What this is not</span>
+        <div class="pink-rule"></div>
+        <ul style="color:var(--text-secondary);font-size:14px;line-height:1.85;padding-left:20px;max-width:780px">
+          <li>Not the official forecast. The official call goes through your manager's process; this is your working view.</li>
+          <li>Not predictive. The math is descriptive: it takes what is in Salesforce today and weights it.</li>
+          <li>Not a coaching report. The risk flags surface conversation prompts, not performance judgements.</li>
+          <li>Not a substitute for talking to the rep. Use this to focus the 1:1, then test the data with the human in the room.</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="footer" id="footer"></div>
+  </div>
+</div>
+
+<script>
+function switchTab(t) {
+  const tabs = ['rollup', 'team1', 'team2', 'methodology'];
+  tabs.forEach(name => {
+    const btn = document.getElementById('tab-btn-' + name);
+    if (btn) btn.classList.toggle('active', name === t);
+  });
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-' + t).classList.add('active');
+}
+
+function doCopy(btnId, taId) {
+  const ta = document.getElementById(taId);
+  ta.select();
+  navigator.clipboard.writeText(ta.value).catch(() => {});
+  const btn = document.getElementById(btnId);
+  const orig = btn.textContent;
+  btn.textContent = 'Copied';
+  btn.classList.add('copied');
+  setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 2000);
+}
+
+(async () => {
+  const TEAM1_REPS = {{TEAM1_REPS_JS}};
+  const TEAM2_REPS = {{TEAM2_REPS_JS}};
+  const START = '{{QUARTER_START}}', END = '{{QUARTER_END}}';
+
+  // Hide the second tab if team 2 has no reps (RVP single-team mode).
+  if (!TEAM2_REPS || TEAM2_REPS.length === 0) {
+    const btn2 = document.getElementById('tab-btn-team2');
+    if (btn2) btn2.classList.add('hidden');
+  }
+
+  /* ---- helpers ---- */
+  const fmt = n => {
+    if (n == null || isNaN(n)) return '-';
+    const a = Math.abs(n);
+    if (a >= 1e6) return '$' + (n/1e6).toFixed(2).replace(/\.?0+$/, '') + 'M';
+    if (a >= 1e3) return '$' + Math.round(n/1e3) + 'K';
+    return '$' + Math.round(n);
+  };
+  const fmtFull = n => n == null || isNaN(n) ? '$0' : '$' + Math.round(n).toLocaleString('en-US');
+  const fmtDate = d => { if (!d) return '-'; return new Date(d + 'T00:00:00').toLocaleDateString('en-AU',{month:'short',day:'numeric'}); };
+  const daysSince = d => { if (!d) return 9999; return Math.floor((Date.now() - new Date(d).getTime()) / 86400000); };
+  const daysUntil = d => { if (!d) return 9999; return Math.ceil((new Date(d + 'T00:00:00').getTime() - Date.now()) / 86400000); };
+  const sumArr = arr => arr.reduce((s, o) => s + (o.Net_ARR__c || 0), 0);
+  const catOf = o => o.Sales_Forecast_Category__c || o.ForecastCategoryName || 'Pipeline';
+  const stripHtml = s => s ? s.replace(/<[^>]*>/g,'').replace(/&[a-zA-Z]+;/g,' ').trim() : '';
+  const hasCont = v => !!v && stripHtml(v).length > 2;
+
+  const getTeam = name => {
+    if (!name) return null;
+    if (TEAM1_REPS.includes(name)) return 'team1';
+    if (TEAM2_REPS && TEAM2_REPS.includes(name)) return 'team2';
+    {{TEAM2_LIKE_JS}}
+    return null;
+  };
+
+  const teamDisplay = key => {
+    if (key === 'team1') return '{{TEAM1_NAME}}';
+    if (key === 'team2') return '{{TEAM2_NAME}}';
+    return '-';
+  };
+
+  /* ---- MEDDPICC ---- */
+  const MEDC_KEYS = ['M','E','D1','D2','P','I','C1','C2'];
+  const MEDC_LABELS = ['M','E','D','D','P','I','C','C'];
+  const MEDC_TIPS = ['Metrics','Economic Buyer','Decision Criteria','Decision Process','Paper Process','Identified Pain','Champion','Competition'];
+
+  const getMedc = o => ({
+    M:  hasCont(o.Metrics__c),
+    E:  !!o.Economic_Buyer__c,
+    D1: hasCont(o.Decision_Criteria__c),
+    D2: hasCont(o.Decision_Process_Actual__c),
+    P:  hasCont(o.Paper_Process__c),
+    I:  hasCont(o.Identified_Pain__c),
+    C1: !!o.Champion_Actual__c,
+    C2: hasCont(o.Competition__c),
+  });
+  const countGaps = o => Object.values(getMedc(o)).filter(v => !v).length;
+
+  /* ---- risk flags ---- */
+  const getRisk = o => {
+    const flags = [];
+    const du = daysUntil(o.CloseDate);
+    if ((o.PushCount || 0) >= 5) flags.push({cls:'r-push',   txt: 'Pushed ' + o.PushCount + 'x'});
+    if (du >= 0 && du <= 30)     flags.push({cls:'r-close',  txt: 'Closes in ' + du + 'd'});
+    if (countGaps(o) >= 4)       flags.push({cls:'r-medc',   txt: 'MEDDPICC ' + (8 - countGaps(o)) + '/8'});
+    const ns = o.Next_Steps__c || o.NextStep || '';
+    if (!ns || ns.trim().length < 5) flags.push({cls:'r-nostep', txt:'No next steps'});
+    return flags;
+  };
+
+  /* ---- weighted math ---- */
+  const calcW = arr => {
+    const floor     = arr.filter(o => catOf(o) === 'Commit');
+    const forecast  = arr.filter(o => catOf(o) === 'Forecast');
+    const upsideAll = arr.filter(o => catOf(o) === 'Upside');
+    const upside    = upsideAll.filter(o => (o.Net_ARR__c || 0) >= 75000);
+    const floorAmt    = sumArr(floor);
+    const forecastAmt = sumArr(forecast);
+    const upsideRaw   = sumArr(upside);
+    const mathCall    = floorAmt + forecastAmt * 0.8 + upsideRaw * 0.25;
+    return { floor, forecast, upside, upsideAll, floorAmt, forecastAmt, upsideRaw, mathCall };
+  };
+
+  const calcEdge = (arr, w) => {
+    const riskyDeals = arr.filter(o => getRisk(o).length >= 2);
+    let discount = 0;
+    riskyDeals.forEach(o => {
+      const c = catOf(o), v = o.Net_ARR__c || 0;
+      if (c === 'Commit')   discount += v * 0.5;
+      else if (c === 'Forecast') discount += v * 0.8 * 0.5;
+      else if (c === 'Upside' && v >= 75000) discount += v * 0.25 * 0.5;
+    });
+    return { edge: w.mathCall - discount, discount, riskyDeals };
+  };
+
+  /* ---- SOQL ---- */
+  const repList = [...TEAM1_REPS, ...(TEAM2_REPS || [])].map(r => "'" + r + "'").join(',');
+  const q = "SELECT Id, Name, Account.Name, StageName, ForecastCategoryName, Sales_Forecast_Category__c, " +
+            "Net_ARR__c, CloseDate, CreatedDate, Owner.Name, " +
+            "LastStageChangeDate, PushCount, " +
+            "NextStep, Next_Steps__c, " +
+            "Metrics__c, Economic_Buyer__c, Decision_Criteria__c, Decision_Process_Actual__c, " +
+            "Paper_Process__c, Identified_Pain__c, Champion_Actual__c, Competition__c " +
+            "FROM Opportunity " +
+            "WHERE IsClosed = false AND CloseDate >= " + START + " AND CloseDate <= " + END + " " +
+            "AND (Owner.Name IN (" + repList + ") {{LIKE_CLAUSES}}) " +
+            "ORDER BY Net_ARR__c DESC NULLS LAST LIMIT 500";
+
+  const SOQL_TOOL = '{{SOQL_TOOL}}';
+  const showError = (heading, details) => {
+    const safe = s => String(s == null ? '' : s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const lines = [
+      '<div style="font-family:var(--font-display);font-weight:700;font-size:18px;color:var(--color-pendo-pink);margin-bottom:8px;letter-spacing:var(--tracking-tight);">' + safe(heading) + '</div>',
+      '<div style="font-size:12px;color:var(--text-secondary);margin-bottom:14px;">Open this panel\'s dev tools (right-click then Inspect) for the full stack.</div>',
+    ];
+    Object.entries(details).forEach(([k,v]) => {
+      lines.push(
+        '<div style="font-weight:700;font-size:10px;letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;color:var(--color-pendo-pink);margin-top:12px;margin-bottom:4px;">' + safe(k) + '</div>' +
+        '<pre style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-md);padding:10px 12px;font-family:var(--font-mono);font-size:11px;line-height:1.5;color:var(--text-primary);white-space:pre-wrap;word-break:break-word;max-height:240px;overflow:auto;">' + safe(v) + '</pre>'
+      );
+    });
+    const el = document.getElementById('loading');
+    el.innerHTML = '<div class="err" style="text-align:left;max-width:920px;margin:0 auto;">' + lines.join('') + '</div>';
+  };
+
+  // Pre-flight: does the cowork MCP bridge even exist on window?
+  if (!window.cowork || typeof window.cowork.callMcpTool !== 'function') {
+    showError('Cowork MCP bridge not available in this artifact', {
+      'window.cowork present': String(!!window.cowork),
+      'callMcpTool function': String(window.cowork && typeof window.cowork.callMcpTool),
+      'mcp tool we wanted': SOQL_TOOL,
+      'available window keys (first 50)': Object.keys(window).slice(0, 50).join(', '),
+    });
+    return;
+  }
+
+  let opps = [];
+  let rawRes = null;
+  try {
+    rawRes = await window.cowork.callMcpTool(SOQL_TOOL, {q});
+    if (!rawRes) throw new Error('callMcpTool returned null/undefined');
+    if (rawRes.isError) {
+      const errText = rawRes.content && rawRes.content[0] && rawRes.content[0].text
+        ? rawRes.content[0].text
+        : JSON.stringify(rawRes);
+      throw new Error('SOQL tool returned isError=true: ' + errText);
+    }
+    if (!rawRes.content || !rawRes.content[0] || !rawRes.content[0].text) {
+      throw new Error('SOQL tool response has no content[0].text. Raw: ' + JSON.stringify(rawRes).slice(0, 500));
+    }
+    const parsed = JSON.parse(rawRes.content[0].text);
+    opps = parsed.records || [];
+  } catch(e) {
+    showError('Could not load Salesforce data', {
+      'error message': e && e.message ? e.message : String(e),
+      'error stack (first 6 lines)': (e && e.stack ? e.stack.split('\n').slice(0, 6).join('\n') : '(no stack)'),
+      'mcp tool called': SOQL_TOOL,
+      'raw response (first 600 chars)': rawRes ? JSON.stringify(rawRes).slice(0, 600) : '(no response captured)',
+      'soql query sent (first 600 chars)': q.slice(0, 600),
+    });
+    return;
+  }
+
+  const now = new Date();
+  document.getElementById('hdr-sub').textContent =
+    '{{QUARTER_LABEL}} · {{QUARTER_DATES}} · ' + now.toLocaleDateString('en-AU',{weekday:'long',month:'long',day:'numeric'});
+  document.getElementById('footer').textContent =
+    'Data from Salesforce · ' + now.toLocaleString('en-AU',{month:'long',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'});
+
+  const team1Opps = opps.filter(o => getTeam(o.Owner && o.Owner.Name) === 'team1');
+  const team2Opps = opps.filter(o => getTeam(o.Owner && o.Owner.Name) === 'team2');
+
+  const team1W = calcW(team1Opps);
+  const team2W = calcW(team2Opps);
+  const team1E = calcEdge(team1Opps, team1W);
+  const team2E = calcEdge(team2Opps, team2W);
+
+  const combinedMath = team1W.mathCall + team2W.mathCall;
+  const combinedEdge = team1E.edge + team2E.edge;
+  const combinedDiscount = team1E.discount + team2E.discount;
+  const allRiskyDeals = [...team1E.riskyDeals, ...team2E.riskyDeals];
+
+  /* ---- METRIC TILES ---- */
+  const renderMetrics = (elId, w, callLabel) => {
+    document.getElementById(elId).innerHTML =
+      '<div class="metric m-floor">' +
+        '<div class="metric-label">Floor · 100%</div>' +
+        '<div class="metric-value">' + fmt(w.floorAmt) + '</div>' +
+        '<div class="metric-sub">' + w.floor.length + ' commit deal' + (w.floor.length !== 1 ? 's' : '') + '</div>' +
+      '</div>' +
+      '<div class="metric m-forecast">' +
+        '<div class="metric-label">Forecast · x80%</div>' +
+        '<div class="metric-value">' + fmt(w.forecastAmt * 0.8) + '</div>' +
+        '<div class="metric-sub">' + fmt(w.forecastAmt) + ' raw · ' + w.forecast.length + ' deals</div>' +
+      '</div>' +
+      '<div class="metric m-upside">' +
+        '<div class="metric-label">Upside over $75k · x25%</div>' +
+        '<div class="metric-value">' + fmt(w.upsideRaw * 0.25) + '</div>' +
+        '<div class="metric-sub">' + fmt(w.upsideRaw) + ' raw · ' + w.upside.length + ' qualify</div>' +
+      '</div>' +
+      '<div class="metric m-call">' +
+        '<div class="metric-label">' + callLabel + '</div>' +
+        '<div class="metric-value">' + fmt(w.mathCall) + '</div>' +
+        '<div class="metric-sub">Math total</div>' +
+      '</div>';
+  };
+  renderMetrics('team1-metrics', team1W, '{{TEAM1_NAME}} math call');
+  renderMetrics('team2-metrics', team2W, '{{TEAM2_NAME}} math call');
+
+  const rollupW = {
+    floor: [...team1W.floor, ...team2W.floor], floorAmt: team1W.floorAmt + team2W.floorAmt,
+    forecast: [...team1W.forecast, ...team2W.forecast], forecastAmt: team1W.forecastAmt + team2W.forecastAmt,
+    upside: [...team1W.upside, ...team2W.upside], upsideRaw: team1W.upsideRaw + team2W.upsideRaw,
+    mathCall: combinedMath
+  };
+  renderMetrics('rollup-metrics', rollupW, 'Combined math');
+
+  /* ---- EDGE BOX ---- */
+  const edgeDiff = combinedEdge - combinedMath;
+  const topRiskForNarrative = [...allRiskyDeals].sort((a,b)=>(b.Net_ARR__c||0)-(a.Net_ARR__c||0)).slice(0,3);
+  let narrativeHtml = '';
+  if (combinedDiscount > 0) {
+    narrativeHtml += '<span class="branch">Pulling back ' + fmt(combinedDiscount) + ' across ' + allRiskyDeals.length + ' deal' + (allRiskyDeals.length !== 1 ? 's' : '') + ' with two or more risk flags.</span>';
+    topRiskForNarrative.forEach(o => {
+      const fl = getRisk(o).map(f => f.txt).join(' · ');
+      narrativeHtml += '<span class="branch">' + (o.Account && o.Account.Name || o.Name) + ' (' + fmt(o.Net_ARR__c) + '): ' + fl + '</span>';
+    });
+  } else {
+    narrativeHtml = '<span class="branch">No multi-flag risk deals. Pipeline health looks solid across both teams.</span>';
+  }
+
+  document.getElementById('edge-box').innerHTML =
+    '<div class="edge-grid">' +
+      '<div>' +
+        '<span class="eyebrow">{{ROLLUP_LABEL}} educated edge · {{QUARTER_LABEL}}</span>' +
+        '<div class="edge-value">' + fmt(combinedEdge) + '</div>' +
+        '<div class="edge-math">Math call: ' + fmt(combinedMath) + ' · Risk adjustment: ' + fmt(edgeDiff) + '</div>' +
+        '<div class="edge-narrative">' + narrativeHtml + '</div>' +
+      '</div>' +
+      '<div class="edge-team-cards">' +
+        '<div class="edge-team-card">' +
+          '<div class="etc-eyebrow">{{TEAM1_NAME}}</div>' +
+          '<div class="etc-value">' + fmt(team1E.edge) + '</div>' +
+          '<div class="etc-sub">{{TEAM1_MANAGER}}</div>' +
+          '<div class="etc-sub" style="margin-top:6px">Math: ' + fmt(team1W.mathCall) + (team1E.discount > 0 ? ' · adjustment -' + fmt(team1E.discount) : '') + '</div>' +
+        '</div>' +
+        '<div class="edge-team-card">' +
+          '<div class="etc-eyebrow">{{TEAM2_NAME}}</div>' +
+          '<div class="etc-value">' + fmt(team2E.edge) + '</div>' +
+          '<div class="etc-sub">{{TEAM2_MANAGER}}</div>' +
+          '<div class="etc-sub" style="margin-top:6px">Math: ' + fmt(team2W.mathCall) + (team2E.discount > 0 ? ' · adjustment -' + fmt(team2E.discount) : '') + '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+
+  /* ---- DEAL ROW ---- */
+  const renderRow = o => {
+    const du = daysUntil(o.CloseDate);
+    const daysOpen = daysSince(o.CreatedDate);
+    const dis = daysSince(o.LastStageChangeDate);
+    const m = getMedc(o);
+    const chips = MEDC_KEYS.map((k,i) =>
+      '<span class="medc ' + (m[k] ? 'filled' : 'missing') + '" title="' + MEDC_TIPS[i] + '">' + MEDC_LABELS[i] + '</span>'
+    ).join('');
+    const flags = getRisk(o);
+    const flagHtml = flags.length
+      ? flags.map(f => '<span class="risk ' + f.cls + '">' + f.txt + '</span>').join('')
+      : '<span class="clean">Clean</span>';
+    const ns = o.Next_Steps__c || o.NextStep || '';
+    const nsFirst = ns ? ns.split('\n')[0].substring(0, 140) : '';
+    const nsHtml = ns
+      ? '<div class="ns-preview">' + nsFirst + (ns.length > 140 ? '…' : '') + '</div>'
+      : '<span class="risk r-nostep">Missing</span>';
+    const duStyle = du <= 14 ? 'color:var(--color-pendo-pink);font-weight:700'
+                  : du <= 30 ? 'color:var(--color-pink-3);font-weight:600'
+                  : 'color:var(--text-muted)';
+
+    return '<tr>' +
+      '<td style="font-size:11px;color:var(--text-secondary);white-space:nowrap">' + ((o.Owner && o.Owner.Name && o.Owner.Name.split(' ')[0]) || '-') + '</td>' +
+      '<td>' +
+        '<div style="font-weight:600;font-size:12px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + (o.Account && o.Account.Name || '-') + '</div>' +
+        '<div style="font-size:10px;color:var(--text-muted)">' + (o.StageName || '-') + '</div>' +
+      '</td>' +
+      '<td class="amt" style="white-space:nowrap">' + fmt(o.Net_ARR__c) + '</td>' +
+      '<td style="text-align:right;font-size:12px;color:var(--text-muted)">' + (daysOpen >= 9999 ? '-' : daysOpen + 'd') + '</td>' +
+      '<td style="text-align:right;font-size:12px;color:var(--text-muted)">' + (dis >= 9999 ? '-' : dis + 'd') + '</td>' +
+      '<td style="font-size:12px;' + duStyle + ';white-space:nowrap">' + fmtDate(o.CloseDate) + '</td>' +
+      '<td><div class="medc-row">' + chips + '</div></td>' +
+      '<td>' + nsHtml + '</td>' +
+      '<td style="min-width:140px">' + flagHtml + '</td>' +
+    '</tr>';
+  };
+
+  const TABLE_HEAD =
+    '<table><thead><tr>' +
+      '<th>Owner</th><th>Account · stage</th><th>Net ARR</th>' +
+      '<th>Days open</th><th>Days in stage</th><th>Close date</th>' +
+      '<th title="M · E · D · D · P · I · C · C">MEDDPICC</th><th>Next steps</th><th>Risk flags</th>' +
+    '</tr></thead><tbody>';
+
+  const renderDeals = (elId, teamOpps) => {
+    const el = document.getElementById(elId);
+    if (!el) return;
+    const w = calcW(teamOpps);
+    let html = '<div class="sec-title">Deal detail</div>';
+
+    const sections = [
+      { label: 'Floor · commit · 100%',           cls: 'floor',    deals: w.floor,     raw: w.floorAmt,    pct: 1.0 },
+      { label: 'Forecast · 80%',                  cls: 'forecast', deals: w.forecast,  raw: w.forecastAmt, pct: 0.8 },
+      { label: 'Upside · 25% · over $75k shown',  cls: 'upside',   deals: w.upsideAll, raw: w.upsideRaw,   pct: 0.25, qualifyCount: w.upside.length },
+    ];
+
+    sections.forEach(s => {
+      if (s.deals.length === 0) return;
+      const calling = s.cls === 'upside'
+        ? s.qualifyCount + ' of ' + s.deals.length + ' qualify · calling ' + fmt(s.raw * s.pct)
+        : s.deals.length + ' deals · calling ' + fmt(s.raw * s.pct);
+      html += '<div class="cat-header ' + s.cls + '">' +
+                '<div><span class="cat-title">' + s.label + '</span></div>' +
+                '<div class="cat-math-label">' + fmt(s.raw) + ' raw → ' + calling + '</div>' +
+              '</div>';
+      html += TABLE_HEAD + s.deals.sort((a,b)=>(b.Net_ARR__c||0)-(a.Net_ARR__c||0)).map(renderRow).join('') + '</tbody></table>';
+    });
+
+    if (w.floor.length + w.forecast.length + w.upsideAll.length === 0) {
+      html += '<div class="empty">No {{QUARTER_LABEL}} deals found.</div>';
+    }
+    el.innerHTML = html;
+  };
+
+  renderDeals('team1-deals', team1Opps);
+  renderDeals('team2-deals', team2Opps);
+
+  /* ---- RISK TABLE (rollup) ---- */
+  const allOpps = [...team1Opps, ...team2Opps];
+  const riskOpps = allOpps.filter(o => getRisk(o).length > 0).sort((a,b) => (b.Net_ARR__c||0) - (a.Net_ARR__c||0));
+  document.getElementById('risk-ct').textContent = riskOpps.length;
+  document.getElementById('risk-body').innerHTML = riskOpps.length === 0
+    ? '<div class="empty">No risk flags across either team.</div>'
+    : TABLE_HEAD + riskOpps.map(renderRow).join('') + '</tbody></table>';
+
+  /* ---- COPYABLE TEXT ---- */
+  const dealLine = (o, prefix) => {
+    const name = o.Account && o.Account.Name || o.Name;
+    const rep = (o.Owner && o.Owner.Name && o.Owner.Name.split(' ')[0]) || '';
+    const rf = getRisk(o).map(f => f.txt);
+    const riskStr = rf.length ? ' [' + rf.join(', ') + ']' : '';
+    return prefix + name + ', ' + fmtFull(o.Net_ARR__c) + ', ' + rep + riskStr;
+  };
+
+  const groupedDealLines = (deals, prefix) => {
+    const map = {};
+    deals.forEach(o => {
+      const key = o.Account && o.Account.Name || o.Name;
+      if (!map[key]) map[key] = [];
+      map[key].push(o);
+    });
+    const groups = Object.values(map).sort((a,b) => sumArr(b) - sumArr(a));
+    const out = [];
+    groups.forEach(grp => {
+      if (grp.length === 1) {
+        out.push(dealLine(grp[0], prefix));
+      } else {
+        const total = sumArr(grp);
+        const rep = (grp[0].Owner && grp[0].Owner.Name && grp[0].Owner.Name.split(' ')[0]) || '';
+        const allRf = [...new Set(grp.flatMap(o => getRisk(o).map(f => f.txt)))];
+        const riskStr = allRf.length ? ' [' + allRf.join(', ') + ']' : '';
+        out.push(prefix + (grp[0].Account && grp[0].Account.Name || grp[0].Name) + ', ' + fmtFull(total) + ' total (' + grp.length + ' deals), ' + rep + riskStr);
+        grp.sort((a,b)=>(b.Net_ARR__c||0)-(a.Net_ARR__c||0)).forEach(o => {
+          out.push('  - ' + o.Name + ', ' + fmtFull(o.Net_ARR__c));
+        });
+      }
+    });
+    return out;
+  };
+
+  const genTeamText = (teamLabel, manager, w, edgeData) => {
+    const d = now.toLocaleDateString('en-AU', {weekday:'long', month:'long', day:'numeric', year:'numeric'});
+    const lines = [
+      teamLabel + ' - {{QUARTER_LABEL}} forecast',
+      'Manager: ' + manager,
+      d,
+      '',
+      'CALL: ' + fmtFull(edgeData.edge),
+      'Floor (100%): ' + fmtFull(w.floorAmt),
+      'Forecast (80%): ' + fmtFull(w.forecastAmt * 0.8) + ' (' + fmtFull(w.forecastAmt) + ' raw)',
+      'Upside over $75k (25%): ' + fmtFull(w.upsideRaw * 0.25) + ' (' + fmtFull(w.upsideRaw) + ' raw)',
+    ];
+    if (edgeData.discount > 0) lines.push('Risk adjustment: -' + fmtFull(edgeData.discount) + ' (' + edgeData.riskyDeals.length + ' flagged)');
+    lines.push('');
+
+    const writeSection = (title, deals, rawTotal, pct) => {
+      const sorted = [...deals].sort((a,b)=>(b.Net_ARR__c||0)-(a.Net_ARR__c||0));
+      if (!sorted.length) return;
+      lines.push(title + ' (' + fmtFull(rawTotal) + ' -> calling ' + fmtFull(rawTotal * pct) + ')');
+      groupedDealLines(sorted, '- ').forEach(l => lines.push(l));
+      lines.push('');
+    };
+
+    writeSection('FLOOR - commit', w.floor, w.floorAmt, 1.0);
+    writeSection('FORECAST - best case', w.forecast, w.forecastAmt, 0.8);
+    writeSection('UPSIDE - over $75k', w.upside, w.upsideRaw, 0.25);
+
+    const allFlagged = [...w.floor, ...w.forecast, ...w.upside]
+      .filter(o => getRisk(o).length > 0)
+      .sort((a,b)=>(b.Net_ARR__c||0)-(a.Net_ARR__c||0));
+    if (allFlagged.length > 0) {
+      lines.push('RISKS (' + allFlagged.length + ' deals, ' + fmtFull(sumArr(allFlagged)) + ' ARR)');
+      groupedDealLines(allFlagged, '- ').forEach(l => lines.push(l));
+    } else {
+      lines.push('RISKS: None identified.');
+    }
+    return lines.join('\n');
+  };
+
+  document.getElementById('team1-text').value = genTeamText('{{TEAM1_NAME}}', '{{TEAM1_MANAGER}}', team1W, team1E);
+  document.getElementById('team2-text').value = genTeamText('{{TEAM2_NAME}}', '{{TEAM2_MANAGER}}', team2W, team2E);
+
+  const avpDate = now.toLocaleDateString('en-AU', {weekday:'long', month:'long', day:'numeric', year:'numeric'});
+  const avpLines = [
+    '{{ROLLUP_LABEL}} forecast rollup - {{QUARTER_LABEL}}',
+    '{{USER_NAME}}, {{USER_TITLE}}',
+    avpDate,
+    '',
+    'EDUCATED EDGE CALL: ' + fmtFull(combinedEdge),
+    'Math call: ' + fmtFull(combinedMath),
+    combinedDiscount > 0 ? 'Risk adjustment: -' + fmtFull(combinedDiscount) + ' (' + allRiskyDeals.length + ' flagged deals)' : 'Risk adjustment: none',
+    '',
+    '{{TEAM1_NAME}} ({{TEAM1_MANAGER}})',
+    'Edge call: ' + fmtFull(team1E.edge) + ' / Math: ' + fmtFull(team1W.mathCall) + (team1E.discount > 0 ? ' / adjustment -' + fmtFull(team1E.discount) : ''),
+    'Floor: ' + fmtFull(team1W.floorAmt) + ' / Forecast 80%: ' + fmtFull(team1W.forecastAmt*0.8) + ' / Upside 25%: ' + fmtFull(team1W.upsideRaw*0.25),
+    '',
+    '{{TEAM2_NAME}} ({{TEAM2_MANAGER}})',
+    'Edge call: ' + fmtFull(team2E.edge) + ' / Math: ' + fmtFull(team2W.mathCall) + (team2E.discount > 0 ? ' / adjustment -' + fmtFull(team2E.discount) : ''),
+    'Floor: ' + fmtFull(team2W.floorAmt) + ' / Forecast 80%: ' + fmtFull(team2W.forecastAmt*0.8) + ' / Upside 25%: ' + fmtFull(team2W.upsideRaw*0.25),
+    '',
+  ];
+
+  if (allRiskyDeals.length > 0) {
+    avpLines.push('KEY RISKS (' + allRiskyDeals.length + ' deals, ' + fmtFull(sumArr(allRiskyDeals)) + ' ARR)');
+    allRiskyDeals.sort((a,b)=>(b.Net_ARR__c||0)-(a.Net_ARR__c||0)).forEach(o => {
+      const team = teamDisplay(getTeam(o.Owner && o.Owner.Name));
+      avpLines.push(dealLine(o, '- [' + team + '] '));
+    });
+  }
+
+  document.getElementById('avp-text').value = avpLines.join('\n');
+
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+})();
+</script>
+</body>
+</html>

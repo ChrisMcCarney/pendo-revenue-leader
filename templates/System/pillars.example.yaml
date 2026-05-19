@@ -1,0 +1,52 @@
+# Example pillars configuration
+#
+# This is a fully populated example showing the shape of pillars.yaml after
+# /setup has filled it in. The /setup wizard writes the real `pillars.yaml`
+# in this folder. You can also edit `pillars.yaml` directly at any time.
+#
+# Each pillar has:
+#   - id:          a stable identifier (do not change after creation)
+#   - name:        human-readable pillar name shown in plans and reviews
+#   - description: one sentence on what the pillar covers
+#   - keywords:    list of single words used to infer pillar from task text
+#
+# Skills (daily-plan, daily-review, week-plan, week-review, process-meetings)
+# read pillar names and keywords from `pillars.yaml` at runtime. Renaming a
+# pillar here updates all future skill output without further configuration.
+
+pillars:
+  - id: pillar_one
+    name: "Pillar 1"
+    description: "Short description of the first focus area. One sentence."
+    keywords:
+      - keyword_a
+      - keyword_b
+      - keyword_c
+      - keyword_d
+      - keyword_e
+
+  - id: pillar_two
+    name: "Pillar 2"
+    description: "Short description of the second focus area."
+    keywords:
+      - keyword_a
+      - keyword_b
+      - keyword_c
+      - keyword_d
+      - keyword_e
+
+  - id: pillar_three
+    name: "Pillar 3"
+    description: "Short description of the third focus area."
+    keywords:
+      - keyword_a
+      - keyword_b
+      - keyword_c
+      - keyword_d
+      - keyword_e
+
+# Priority limits (max active tasks per priority level)
+priority_limits:
+  P0: 3
+  P1: 5
+  P2: 10

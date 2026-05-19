@@ -1,0 +1,38 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Semantic tokens</title>
+<link rel="stylesheet" href="_preview.css">
+<style>
+  .pair { display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .side { padding: 16px; border-radius: 12px; font-size: 12px; font-family: var(--font-mono); }
+  .side.l { background:#EDEEE7; color:#181818; }
+  .side.d { background:#000; color:#fff; }
+  .tok { display:flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid rgba(128,128,128,0.18); }
+  .tok:last-child { border-bottom: none; }
+  .chip { width: 14px; height: 14px; border-radius: 3px; border: 1px solid rgba(128,128,128,0.35); display: inline-block; vertical-align:middle; margin-right:6px; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="label">Semantic tokens · light / dark parity</div>
+  <div class="pair">
+    <div class="side l">
+      <div style="font-family:var(--font-sans);font-weight:700;margin-bottom:6px;font-size:11px;letter-spacing:.18em;">LIGHT</div>
+      <div class="tok"><span><span class="chip" style="background:#EDEEE7"></span>--bg</span><span>#EDEEE7</span></div>
+      <div class="tok"><span><span class="chip" style="background:#FFF"></span>--bg-card</span><span>#FFFFFF</span></div>
+      <div class="tok"><span><span class="chip" style="background:#181818"></span>--text-primary</span><span>#181818</span></div>
+      <div class="tok"><span><span class="chip" style="background:#565655"></span>--text-secondary</span><span>#565655</span></div>
+      <div class="tok"><span><span class="chip" style="background:#C7C8C2"></span>--border</span><span>#C7C8C2</span></div>
+      <div class="tok"><span><span class="chip" style="background:#FF4876"></span>--accent</span><span>#FF4876</span></div>
+    </div>
+    <div class="side d">
+      <div style="font-family:var(--font-sans);font-weight:700;margin-bottom:6px;font-size:11px;letter-spacing:.18em;">DARK</div>
+      <div class="tok"><span><span class="chip" style="background:#000"></span>--bg</span><span>#000000</span></div>
+      <div class="tok"><span><span class="chip" style="background:#121212"></span>--bg-card</span><span>#121212</span></div>
+      <div class="tok"><span><span class="chip" style="background:#fff"></span>--text-primary</span><span>#FFFFFF</span></div>
+      <div class="tok"><span><span class="chip" style="background:#A1A29E"></span>--text-secondary</span><span>#A1A29E</span></div>
+      <div class="tok"><span><span class="chip" style="background:#303030"></span>--border</span><span>#303030</span></div>
+      <div class="tok"><span><span class="chip" style="background:#FF4876"></span>--accent</span><span>#FF4876</span></div>
+    </div>
+  </div>
+</div>
+</body></html>

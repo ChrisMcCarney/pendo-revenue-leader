@@ -1,0 +1,68 @@
+# Team Composition - example
+#
+# This is the shape that /setup writes to System/team.yaml after pulling your
+# reports from Salesforce and resolving Slack handles.
+#
+# Single source of truth for who is on your team and who is in your region.
+# All skills that scope by team membership MUST read from team.yaml at
+# runtime, never hardcode names.
+#
+# Updating after /setup: when a team change happens ("X is now on my team",
+# "Y has left Pendo", "Z is moving to another manager"), update team.yaml AND
+# the corresponding `05_People/Internal/{Name}.md` page frontmatter
+# (`type: rep` for direct reports, `type: person` for everyone else) and
+# `Reports to:` line. Keep both in lockstep.
+
+# Direct reports (reps you coach; they roll up to you)
+# These get rep coaching pages: `05_People/Internal/{Name}.md` with type: rep.
+direct_reports:
+  - name: "{direct_report_1_name}"
+    sfdc_owner_name: "{direct_report_1_name}"
+    slack: "{direct_report_1_slack}"
+    role: "{direct_report_1_role}"
+
+  - name: "{direct_report_2_name}"
+    sfdc_owner_name: "{direct_report_2_name}"
+    slack: "{direct_report_2_slack}"
+    role: "{direct_report_2_role}"
+
+  - name: "{direct_report_3_name}"
+    sfdc_owner_name: "{direct_report_3_name}"
+    slack: "{direct_report_3_slack}"
+    role: "{direct_report_3_role}"
+
+# Regional peers (deals visible to you as RVP but coached by someone else)
+# These get standard person pages: `05_People/Internal/{Name}.md` with type: person.
+region_peers:
+  - name: "{region_peer_1_name}"
+    sfdc_owner_name: "{region_peer_1_name}"
+    slack: "{region_peer_1_slack}"
+    role: "{region_peer_1_role}"
+    reports_to: "{manager_name}"
+
+  - name: "{region_peer_2_name}"
+    sfdc_owner_name: "{region_peer_2_name}"
+    slack: "{region_peer_2_slack}"
+    role: "{region_peer_2_role}"
+    reports_to: "{manager_name}"
+
+  - name: "{region_peer_3_name}"
+    sfdc_owner_name: "{region_peer_3_name}"
+    slack: "{region_peer_3_slack}"
+    role: "{region_peer_3_role}"
+    reports_to: "{manager_name}"
+
+# Your manager
+manager:
+  name: "{manager_name}"
+  slack: "{manager_slack_handle}"
+
+# ---
+# Scope conventions for skills
+# ---
+# "my team" / "my reports" / "the team" => direct_reports only
+# "{user_region} region" / "regional pipeline" => direct_reports + region_peers
+# "{manager_name_first}'s team" => region_peers
+#
+# Pipeline scope: regenerate-pipeline queries direct_reports + region_peers.
+# Coaching skills (1:1 prep, MEDDPICC review, etc): direct_reports only.

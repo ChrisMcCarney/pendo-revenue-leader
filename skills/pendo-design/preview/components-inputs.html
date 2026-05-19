@@ -1,0 +1,24 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Form inputs</title>
+<link rel="stylesheet" href="_preview.css">
+<style>
+  .f { display:flex; flex-direction:column; gap:6px; }
+  .flbl { font-family:Inter; font-weight:500; font-size:12px; color:#565655; }
+  .fi { font-family:Inter; font-size:14px; padding:10px 12px; border-radius:8px; border:1px solid #C7C8C2; background:#fff; color:#181818; }
+  .fi:focus { outline:none; border-color:#FF4876; box-shadow: 0 0 0 4px rgba(255,72,118,.18); }
+  .fg { display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+  .fi.err { border-color:#FF4876; box-shadow: 0 0 0 4px rgba(255,72,118,.18); }
+  .help { font-family:Inter; font-size:11px; color:#A1A29E; }
+  .err-t { color:#FF4876; font-family:Inter; font-size:11px; }
+</style></head>
+<body>
+<div class="card">
+  <div class="label">Form inputs · 8px radius, pink focus ring</div>
+  <div class="fg">
+    <div class="f"><label class="flbl">Work email</label><input class="fi" value="alex@company.com"></div>
+    <div class="f"><label class="flbl">Company</label><input class="fi" placeholder="Acme Inc."></div>
+    <div class="f"><label class="flbl">Role</label><input class="fi" value="Product manager"></div>
+    <div class="f"><label class="flbl">Team size</label><input class="fi err" value="0"><span class="err-t">Must be at least 1</span></div>
+  </div>
+</div>
+</body></html>

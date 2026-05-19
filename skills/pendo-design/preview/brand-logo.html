@@ -1,0 +1,71 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Logo</title>
+<link rel="stylesheet" href="_preview.css">
+<style>
+  .stack { display: flex; flex-direction: column; gap: 14px; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .bg { padding: 32px; border-radius: 12px; display:flex; flex-direction:column; gap:14px; align-items:flex-start; min-height: 160px; justify-content:center; }
+  .bg.d { background:#000; color:#fff; }
+  .bg.l { background:#EDEEE7; color:#181818; border:1px solid #C7C8C2; }
+  .lockup { height: 44px; width: auto; display:block; }
+  .lockup.sm { height: 36px; }
+  .chev { width:44px; height:44px; display:block; }
+  .variants { display:flex; gap:22px; align-items:center; }
+  .caption { font-family:var(--font-mono); font-size:10px; color:#A1A29E; }
+  .bg.l .caption { color: #7C7C79; }
+  .label-sub { font-family:var(--font-mono); font-size:10px; color:#7C7C79; margin-top:-2px; }
+  .section-label { font-family:var(--font-mono); font-size:10px; color:#7C7C79; text-transform: uppercase; letter-spacing: 0.18em; margin-top: 8px; }
+</style></head>
+<body>
+<div class="card">
+  <div class="label">Logo · official wordmark + chevron geometry</div>
+  <div class="label-sub">Wordmark in graphite/off-white, chevron always pink. Four approved forms per mark.</div>
+
+  <div class="stack" style="margin-top: 10px;">
+
+    <div class="section-label">Full wordmark lockup</div>
+    <div class="row">
+      <div class="bg d">
+        <img class="lockup" src="../assets/pendo-logo-light.svg" alt="pendo wordmark, light">
+        <div class="caption">On dark · pendo-logo-light.svg (off-white + pink chevron)</div>
+      </div>
+      <div class="bg l">
+        <img class="lockup" src="../assets/pendo-logo-dark.svg" alt="pendo wordmark, dark">
+        <div class="caption">On light · pendo-logo-dark.svg (graphite + pink chevron)</div>
+      </div>
+    </div>
+
+    <div class="section-label">Single-color wordmark (white / black)</div>
+    <div class="row">
+      <div class="bg d">
+        <img class="lockup sm" src="../assets/pendo-logo-white.svg" alt="pendo wordmark, white">
+        <div class="caption">White · pendo-logo-white.svg · for photography / busy backgrounds</div>
+      </div>
+      <div class="bg l">
+        <img class="lockup sm" src="../assets/pendo-logo-black.svg" alt="pendo wordmark, black">
+        <div class="caption">Black · pendo-logo-black.svg · for single-color print / fax</div>
+      </div>
+    </div>
+
+    <div class="section-label">Chevron only · three badge forms</div>
+    <div class="row">
+      <div class="bg d">
+        <div class="variants">
+          <img class="chev" src="../assets/pendo-chevron.svg" alt="Primary chevron">
+          <img class="chev" src="../assets/pendo-chevron-square.svg" alt="Pink square badge">
+          <img class="chev" src="../assets/pendo-chevron-circle.svg" alt="Pink circle badge">
+        </div>
+        <div class="caption">Chevron · pink square · pink circle · on black</div>
+      </div>
+      <div class="bg l">
+        <div class="variants">
+          <img class="chev" src="../assets/pendo-chevron.svg" alt="Primary chevron">
+          <img class="chev" src="../assets/pendo-chevron-square.svg" alt="Pink square badge">
+          <img class="chev" src="../assets/pendo-chevron-circle.svg" alt="Pink circle badge">
+        </div>
+        <div class="caption">Chevron · pink square · pink circle · on warm white</div>
+      </div>
+    </div>
+  </div>
+</div>
+</body></html>

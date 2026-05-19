@@ -1,0 +1,19 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Gradients</title>
+<link rel="stylesheet" href="_preview.css">
+<style>
+  .g { height: 90px; border-radius: 12px; display:flex; align-items:flex-end; padding:10px 14px; font-family:var(--font-sans); font-weight:700; font-size:12px; color:#fff; }
+  .g.light { color: #181818; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="label">Signature gradients · always radial, focus on an edge</div>
+  <div class="grid" style="grid-template-columns: 1fr 1fr;">
+    <div class="g" style="background: radial-gradient(ellipse at 0% 50%, #FF9ED7 0%, #FD6AA5 25%, #D80574 50%, #97127A 75%, #000 100%);">Dark · ellipse at 0% 50%</div>
+    <div class="g light" style="background: radial-gradient(ellipse at 0% 50%, #97127A 0%, #D80574 25%, #FD6AA5 50%, #FF9ED7 75%, #EDEEE7 100%);">Light · ellipse at 0% 50%</div>
+    <div class="g" style="background: radial-gradient(ellipse at 100% 0%, #FF9ED7 0%, #FD6AA5 20%, #D80574 45%, #97127A 70%, #000 100%);">Dark corner · 100% 0%</div>
+    <div class="g" style="background: radial-gradient(ellipse at 50% 0%, #D80574 0%, #97127A 30%, #000 70%);">Top-glow · 50% 0%</div>
+  </div>
+</div>
+</body></html>

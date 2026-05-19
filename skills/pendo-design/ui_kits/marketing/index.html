@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Pendo — Better software starts here.</title>
+<link rel="stylesheet" href="../../colors_and_type.css"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap"/>
+<style>
+  html, body { margin: 0; background: #F7F7F3; }
+  [data-screen-label] { font-family: var(--font-sans); }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="NavBar.jsx"></script>
+<script type="text/babel" src="Hero.jsx"></script>
+<script type="text/babel" src="FeatureGrid.jsx"></script>
+<script type="text/babel" src="StatPanel.jsx"></script>
+<script type="text/babel" src="DataSection.jsx"></script>
+<script type="text/babel" src="LogosStrip.jsx"></script>
+<script type="text/babel" src="QuoteBlock.jsx"></script>
+<script type="text/babel" src="ResourcesSection.jsx"></script>
+<script type="text/babel" src="FAQ.jsx"></script>
+<script type="text/babel" src="CTAFooter.jsx"></script>
+<script type="text/babel" src="Footer.jsx"></script>
+<script type="text/babel">
+  const App = () => (
+    <div data-screen-label="Marketing landing">
+      <NavBar />
+      <Hero />
+      <FeatureGrid />
+      <DataSection />
+      <LogosStrip />
+      <QuoteBlock />
+      <ResourcesSection />
+      <div style={{
+        position: "relative",
+        paddingTop: 40,
+        backgroundImage:
+          // Top & bottom cream fade so the image blends into the page cream with no hard edge
+          "linear-gradient(to bottom, rgba(247,247,243,1) 0%, rgba(247,247,243,0) 120px, rgba(247,247,243,0) calc(100% - 240px), rgba(247,247,243,1) 100%), " +
+          "url('../../assets/footer-bg.png')",
+        backgroundSize: "100% 100%, cover",
+        backgroundPosition: "center, center",
+        backgroundRepeat: "no-repeat, no-repeat"
+      }}>
+        <FAQ />
+        <Footer />
+      </div>
+    </div>
+  );
+  ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

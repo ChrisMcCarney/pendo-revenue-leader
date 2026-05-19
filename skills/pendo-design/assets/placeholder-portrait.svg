@@ -1,0 +1,14 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 400" aria-hidden="true">
+  <defs>
+    <linearGradient id="ph-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#303030"></stop>
+      <stop offset="1" stop-color="#181818"></stop>
+    </linearGradient>
+  </defs>
+  <rect width="300" height="400" fill="url(#ph-bg)"></rect>
+  
+  <circle cx="150" cy="160" r="52" fill="#565655"></circle>
+  <path d="M60 400 C60 320 110 272 150 272 C190 272 240 320 240 400 Z" fill="#565655"></path>
+  <text x="150" y="380" text-anchor="middle" fill="#A1A29E" font-family="Inter, sans-serif" font-size="14" font-weight="500">Portrait placeholder</text>
+</svg>

@@ -1,0 +1,66 @@
+/* Shared preview-card styles. All cards are ~700px wide, varying height. */
+@import url("../colors_and_type.css");
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  overflow: hidden;
+}
+
+.card {
+  width: 700px;
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card.dark { background: var(--color-black); color: var(--color-white); }
+.card.graphite { background: var(--color-graphite); color: var(--color-white); }
+.card.cream { background: var(--color-light-mode); color: var(--color-black); }
+.card.gradient {
+  background: radial-gradient(ellipse at 0% 50%, #FF9ED7 0%, #FD6AA5 25%, #D80574 50%, #97127A 75%, #000000 100%);
+  color: var(--color-white);
+}
+
+.row { display: flex; gap: 12px; align-items: center; }
+.col { display: flex; flex-direction: column; gap: 8px; }
+.grid { display: grid; gap: 12px; }
+
+.swatch {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 12px;
+  border-radius: 10px;
+  height: 92px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.2;
+  color: var(--color-white);
+}
+.swatch .name { font-family: var(--font-sans); font-weight: 600; font-size: 12px; }
+.swatch.dark-text { color: var(--color-black); }
+
+.label {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.dark .label, .graphite .label, .gradient .label { color: #A1A29E; }
+
+.meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.dark .meta, .graphite .meta, .gradient .meta { color: #C7C8C2; }

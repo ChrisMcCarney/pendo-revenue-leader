@@ -1,0 +1,40 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Cards</title>
+<link rel="stylesheet" href="_preview.css">
+<style>
+  .cards { display:grid; grid-template-columns: repeat(2,1fr); gap:10px; max-width: 560px; }
+  .cc { border-radius:12px; padding:14px; font-family:Inter; font-size:12px; min-height:110px; display:flex; flex-direction:column; gap:8px; position:relative; overflow:hidden; }
+  .cc .t { font-weight:600; font-size:13px; }
+  .cc.dark { background:#303030; color:#fff; }
+  .cc.light { background:#fff; color:#181818; border:1px solid #C7C8C2; }
+  .cc.soft { background:#EDEEE7; color:#181818; }
+
+  /* Pankiverse card — image is zoomed out, blurred, and cropped to an edge so only a small
+     abstract portion shows; rest of card is solid ink so text stays legible. */
+  .cc.pinka { background:#181818; color:#fff; isolation:isolate; }
+  .cc.pinka::before {
+    content:"";
+    position:absolute; inset:-20px;
+    background-image: url("../assets/pankiverse/pankiverse-04.png");
+    background-size: 180%;
+    background-position: 8% 92%;       /* pull the imagery to the lower-left corner only */
+    filter: blur(14px) saturate(1.05);
+    opacity: 0.9;
+    z-index:0;
+    /* fade from visible in the lower-left to fully transparent at the upper-right */
+    -webkit-mask-image: radial-gradient(120% 120% at 0% 100%, #000 0%, #000 22%, rgba(0,0,0,0.5) 42%, transparent 62%);
+            mask-image: radial-gradient(120% 120% at 0% 100%, #000 0%, #000 22%, rgba(0,0,0,0.5) 42%, transparent 62%);
+  }
+  .cc.pinka > * { position:relative; z-index:1; }
+</style></head>
+<body>
+<div class="card">
+  <div class="label">Card system · all rounded, never sharp-cornered</div>
+  <div class="cards">
+    <div class="cc dark"><div class="t">Dark card</div><div>#303030 fill · no border</div></div>
+    <div class="cc light"><div class="t">Light card</div><div>White fill · #C7C8C2 border</div></div>
+    <div class="cc soft"><div class="t">Soft gray</div><div>#EDEEE7 fill · no border</div></div>
+    <div class="cc pinka"><div class="t">Pankiverse</div><div>Pank imagery · decorative only</div></div>
+  </div>
+</div>
+</body></html>

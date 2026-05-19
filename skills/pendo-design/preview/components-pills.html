@@ -1,0 +1,106 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Pills & badges</title>
+<link rel="stylesheet" href="_preview.css">
+<style>
+  /* Base pill */
+  .pill { display:inline-flex; align-items:center; gap:6px; padding:5px 12px; border-radius:999px; font-family:Inter; font-weight:700; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; background:transparent; border:1.5px solid transparent; }
+
+  /* Pink variants (primary brand) */
+  .pill.pink        { border-color:#FF4876; color:#FF4876; }
+  .pill.pink-filled { background:#FF4876; color:#fff; }
+  .pill.pink-on-dk  { background:#000; color:#fff; border-color:#FF4876; }
+
+  /* Neutral — light mode (pink-free) */
+  .pill.ink         { border-color:#181818; color:#181818; }
+  .pill.ink-filled  { background:#181818; color:#fff; }
+  .pill.graphite    { border-color:#565655; color:#565655; }
+
+  /* Subtle — light mode (de-emphasized, pink-free) */
+  .pill.subtle-lt        { border-color:#C7C8C2; color:#565655; }
+  .pill.subtle-lt-filled { background:#EDEEE7; color:#565655; }
+  .pill.subtle-lt-ghost  { color:#7C7C79; }
+
+  /* Neutral — dark mode (pink-free) */
+  .pill.cream       { border-color:#EDEEE7; color:#EDEEE7; }
+  .pill.cream-filled{ background:#EDEEE7; color:#181818; }
+  .pill.ghost       { border-color:#7C7C79; color:#C7C8C2; }
+
+  /* Subtle — dark mode (de-emphasized, pink-free) */
+  .pill.subtle-dk        { border-color:#3A3A38; color:#7C7C79; }
+  .pill.subtle-dk-filled { background:#252524; color:#C7C8C2; }
+  .pill.subtle-dk-ghost  { color:#7C7C79; }
+
+  /* Number circles */
+  .numc { width:34px; height:34px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center; font-family:Inter; font-weight:500; font-size:16px; border:1.5px solid transparent; }
+  .numc.pink  { border-color:#FF4876; color:#FF4876; }
+  .numc.ink   { border-color:#181818; color:#181818; }
+  .numc.cream { border-color:#EDEEE7; color:#EDEEE7; }
+  .numc.ink-filled   { background:#181818; color:#fff; border-color:#181818; }
+  .numc.cream-filled { background:#EDEEE7; color:#181818; border-color:#EDEEE7; }
+  /* Subtle number circles */
+  .numc.subtle-lt { border-color:#C7C8C2; color:#7C7C79; }
+  .numc.subtle-lt-filled { background:#EDEEE7; color:#565655; border-color:#EDEEE7; }
+  .numc.subtle-dk { border-color:#3A3A38; color:#7C7C79; }
+  .numc.subtle-dk-filled { background:#252524; color:#C7C8C2; border-color:#252524; }
+
+  /* Row layouts */
+  .row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .surface-lt { padding:14px 16px; border-radius:10px; background:#EDEEE7; }
+  .surface-dk { padding:14px 16px; border-radius:10px; background:#000; }
+  .mini { font-family:Inter; font-size:10px; color:#7C7C79; letter-spacing:0.12em; text-transform:uppercase; margin: 14px 0 6px; font-weight:600; }
+</style></head>
+<body>
+<div class="card">
+  <div class="label">Pills, badges, number circles</div>
+
+  <div class="mini">Pink — primary brand</div>
+  <div class="row">
+    <span class="pill pink">From</span>
+    <span class="pill pink">To</span>
+    <span class="pill pink-filled">Coming soon</span>
+    <span class="numc pink">1</span>
+    <span class="numc pink">2</span>
+  </div>
+  <div class="surface-dk row" style="margin-top:8px">
+    <span class="pill pink-on-dk">From</span>
+    <span class="pill pink-filled">Coming soon</span>
+    <span class="numc pink">01</span>
+  </div>
+
+  <div class="mini">Neutral — light mode</div>
+  <div class="row">
+    <span class="pill ink">New</span>
+    <span class="pill ink-filled">Beta</span>
+    <span class="pill graphite">Draft</span>
+    <span class="numc ink">1</span>
+    <span class="numc ink-filled">2</span>
+  </div>
+
+  <div class="mini">Subtle — light mode · de-emphasized</div>
+  <div class="row">
+    <span class="pill subtle-lt">New</span>
+    <span class="pill subtle-lt-filled">Beta</span>
+    <span class="pill subtle-lt-ghost">Draft</span>
+    <span class="numc subtle-lt">1</span>
+    <span class="numc subtle-lt-filled">2</span>
+  </div>
+
+  <div class="mini">Neutral — dark mode</div>
+  <div class="surface-dk row">
+    <span class="pill cream">New</span>
+    <span class="pill cream-filled">Beta</span>
+    <span class="pill ghost">Draft</span>
+    <span class="numc cream">1</span>
+    <span class="numc cream-filled">2</span>
+  </div>
+
+  <div class="mini">Subtle — dark mode · de-emphasized</div>
+  <div class="surface-dk row">
+    <span class="pill subtle-dk">New</span>
+    <span class="pill subtle-dk-filled">Beta</span>
+    <span class="pill subtle-dk-ghost">Draft</span>
+    <span class="numc subtle-dk">1</span>
+    <span class="numc subtle-dk-filled">2</span>
+  </div>
+</div>
+</body></html>

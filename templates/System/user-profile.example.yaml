@@ -1,0 +1,97 @@
+# User Profile Configuration - example
+#
+# This is the shape that /setup writes to System/user-profile.yaml during
+# Step 2 (Identity). Drives identity, tone, and per-user adaptations for
+# Cowork. You can edit user-profile.yaml directly at any time after setup.
+
+# Your name
+name: "{user_name}"
+
+# Your role (e.g. Customer Engineer, Account Director, Sales Director, CSM, RVP)
+role: "{user_role}"
+
+# Role group (drives skill filtering)
+# Options: sales, customer_success, marketing, engineering, product, leadership
+role_group: "leadership"
+
+# Your company
+company: "{company_name}"
+
+# Company size
+company_size: "scaling"  # startup | scaling | enterprise | large_enterprise
+
+# Email domain (for internal vs external person routing)
+email_domain: "{email_domain}"
+
+# Your work email
+work_email: "{user_email}"
+
+# Timezone
+timezone: "{user_timezone}"
+
+# City
+city: "{user_city}"
+
+# Manager
+manager: "{manager_name}"
+
+# Team / region label
+team: "{user_region} Sales"
+region: "{user_region}"
+
+# Fiscal calendar
+# Pendo defaults to fiscal year starting in February (month = 2). Skills compute
+# the current fiscal quarter and year at runtime from this value.
+fiscal_year_start_month: {fiscal_year_start_month}
+
+# Calendar
+calendar:
+  work_calendar: "{user_email}"
+  calendars_to_query:
+    - "{user_email}"
+
+# Communication preferences
+communication:
+  formality: "professional_casual"  # formal | professional_casual | casual
+  directness: "balanced"            # very_direct | balanced | supportive
+  detail_level: "concise"           # concise | balanced | comprehensive
+  career_level: "leadership"        # junior | mid | senior | leadership | c_suite
+  coaching_style: "collaborative"   # encouraging | collaborative | challenging
+
+# Personality / strengths assessment (optional)
+# Fill in if you've done one. Cowork uses these to adapt feedback and pacing.
+profile:
+  insights_discovery:
+    dominant_colour: ""             # Cool Blue | Earth Green | Sunshine Yellow | Fiery Red
+    type: ""                        # e.g., "Observing Coordinator"
+  cliftonstrengths:
+    top_5: []                       # e.g., [Learner, Maximiser, Ideation, Individualisation, Communication]
+  disc:
+    style: ""                       # e.g., "C-S"
+  working_genius:
+    geniuses: []                    # e.g., [Wonder, Galvanizing]
+
+# Pendo GTM operating context
+gtm:
+  model: "Unified end-to-end customer motion"
+  alignment:
+    customer_engineer: "Owns the technical motion across the customer lifecycle"
+    account_director: "Owns the commercial motion, deal strategy, and revenue"
+    customer_success: "Owns post-sale adoption, retention, and expansion"
+    sales_leadership: "Owns team performance, forecast, and strategic accounts"
+  process:
+    cep: "Stages 0-6, see System/cep-stages.yaml"
+    meddpicc: "Default qualification and progression frame"
+    command_of_the_message: "Frame challenge to impact to value of solving"
+
+# Slack
+slack:
+  team_channel: ""        # e.g., your team's primary channel
+  practice_channel: ""    # e.g., your practice or function channel
+  account_channel_pattern: "" # e.g., "deal-{account}"
+
+# SFDC Notes (style guide for Salesforce summaries)
+sfdc_notes:
+  style: "ultra_brief"
+  max_sentences: 2
+  tone: "straight_to_the_point"

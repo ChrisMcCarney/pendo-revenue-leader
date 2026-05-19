@@ -1,0 +1,294 @@
+# Canonical placeholder map for the Pendo Sales Leader plugin.
+#
+# This file is the source of truth for what the /setup wizard must capture
+# from the user and what tokens get substituted into the templated tree at
+# `templates/`. Curly-brace tokens are replaced literally by /setup at install
+# time. Anything tagged "config_lookup" must be resolved at skill-run time by
+# reading the file at `lookup_from`, not by string substitution.
+
+# -----------------------------------------------------------------------------
+# Section 1. Identity placeholders. Captured in /setup step 2.
+# -----------------------------------------------------------------------------
+
+identity:
+  "{user_name}":
+    capture: "Step 2 - Identity. Free-text full name."
+    example: "Alex Lee"
+    source_strings_replaced:
+      - "Chris McCarney"
+
+  "{user_first_name}":
+    capture: "Derived from {user_name} (split on first space)."
+    example: "Alex"
+    source_strings_replaced:
+      - "Chris"
+
+  "{user_role}":
+    capture: "Step 2 - Identity. Single-select with options [RVP Sales, Sales Manager, Sales Director, Other]."
+    example: "RVP Sales"
+    source_strings_replaced:
+      - "RVP Sales, APAC"
+      - "RVP Sales APAC"
+
+  "{user_region}":
+    capture: "Step 2 - Identity. Free-text region label."
+    example: "APAC"
+    source_strings_replaced:
+      - "APAC"
+
+  "{user_city}":
+    capture: "Step 2 - Identity. Free-text city."
+    example: "Sydney"
+    source_strings_replaced:
+      - "Melbourne"
+
+  "{user_timezone}":
+    capture: "Step 2 - Identity. Single-select IANA timezone with sensible regional defaults."
+    example: "Australia/Sydney"
+    source_strings_replaced:
+      - "Australia/Melbourne"
+
+  "{user_email}":
+    capture: "Step 2 - Identity. Pre-fill from connected Google/Slack identity, confirm with user."
+    example: "alex.lee@pendo.io"
+    source_strings_replaced:
+      - "chris.mccarney@pendo.io"
+
+  "{user_slack_handle}":
+    capture: "Step 2 - Identity. Pre-fill from Slack workspace user lookup, confirm with user."
+    example: "alex.lee"
+    source_strings_replaced:
+      - "chris.mccarney"
+
+  "{company_name}":
+    capture: "Default Pendo. Single-select [Pendo, Other]."
+    example: "Pendo"
+
+  "{email_domain}":
+    capture: "Derived from {user_email}."
+    example: "pendo.io"
+
+# -----------------------------------------------------------------------------
+# Section 2. Manager. Captured in /setup step 2.
+# -----------------------------------------------------------------------------
+
+manager:
+  "{manager_name}":
+    capture: "Step 2 - Identity. Pre-fill from Salesforce User.ManagerId lookup, confirm with user."
+    example: "Pat Singh"
+    source_strings_replaced:
+      - "Benjamin Weldon"
+      - "Ben Weldon"
+
+  "{manager_name_first}":
+    capture: "Derived from {manager_name}."
+    example: "Pat"
+    source_strings_replaced:
+      - "Ben"
+
+  "{manager_slack_handle}":
+    capture: "Step 2 - Identity. Resolved via Slack lookup against manager email."
+    example: "pat.singh"
+    source_strings_replaced:
+      - "benjamin.weldon"
+
+# -----------------------------------------------------------------------------
+# Section 3. Fiscal calendar. Captured in /setup step 2.
+# -----------------------------------------------------------------------------
+
+fiscal_calendar:
+  "{fiscal_year_start_month}":
+    capture: "Step 2 - Identity. Default 2 (February) for Pendo. Single-select 1-12."
+    example: 2
+
+  "{fiscal_year_label}":
+    capture: "Computed at runtime by skills, not stored. e.g. FY27."
+    example: "FY27"
+    note: "Skills compute this from today's date plus {fiscal_year_start_month}."
+
+  "{current_fiscal_quarter}":
+    capture: "Computed at runtime by skills, not stored."
+    example: "Q2 FY27"
+
+# -----------------------------------------------------------------------------
+# Section 4. Pillars. Captured in /setup step 3.
+# -----------------------------------------------------------------------------
+
+pillars:
+  "{pillar_1_name}":
+    capture: "Step 3 - Pillars. AskUserQuestion presents three sensible RVP defaults, user can edit each."
+    default: "Sales Partnership"
+  "{pillar_1_description}":
+    capture: "Step 3 - Pillars. Free-text short description for the pillar."
+  "{pillar_1_keywords}":
+    capture: "Step 3 - Pillars. Comma-separated list."
+
+  "{pillar_2_name}":
+    capture: "Step 3 - Pillars."
+    default: "Tech Win Rate"
+  "{pillar_2_description}":
+    capture: "Step 3 - Pillars."
+  "{pillar_2_keywords}":
+    capture: "Step 3 - Pillars."
+
+  "{pillar_3_name}":
+    capture: "Step 3 - Pillars."
+    default: "Thought Leadership"
+  "{pillar_3_description}":
+    capture: "Step 3 - Pillars."
+  "{pillar_3_keywords}":
+    capture: "Step 3 - Pillars."
+
+# -----------------------------------------------------------------------------
+# Section 5. Team. Captured in /setup step 4 from Salesforce + Slack.
+# -----------------------------------------------------------------------------
+#
+# IMPORTANT: team data is *not* substituted as placeholders into the templated
+# tree. Skill prompts must read team.yaml at runtime. The /setup wizard
+# populates team.yaml; templates ship with team.example.yaml only.
+
+team:
+  source: "SOQL: SELECT Id, Name, Email, ManagerId, UserRole.Name FROM User WHERE ManagerId = '{current_user_sfdc_id}' AND IsActive = true"
+  config_lookup: "System/team.yaml"
+  source_strings_replaced:
+    - "Niamh Cullen"
+    - "Niamh"
+    - "Goutham Ashok"
+    - "Goutham"
+    - "Perry Paterson"
+    - "Perry"
+    - "Jake Wolfin"
+    - "Jake"
+    - "Jenny Alexander"
+    - "Waqar Mirza"
+    - "Waqar"
+    - "Eugene Darmanto"
+    - "Hiltsje Smilde"
+    - "Caleb Love"
+    - "Chris Mahoney"
+    - "Adrian Mendoza"
+    - "Kannan Sivagnanam"
+    - "Alex Cordner"
+
+# -----------------------------------------------------------------------------
+# Section 6. Active accounts. Captured in /setup step 5 from Salesforce.
+# -----------------------------------------------------------------------------
+#
+# Account-specific data is never templated. /setup scaffolds one
+# `04_Accounts/Active/{account_name}/` folder per user-selected account from
+# the derived workstation template. MEMORY.md seeds from live SFDC fields.
+
+accounts:
+  source: "SOQL: SELECT Id, Name, StageName, CloseDate, Net_ARR__c, Owner.Name FROM Opportunity WHERE Owner.ManagerId = '{user_sfdc_id}' AND IsClosed = false ORDER BY Net_ARR__c DESC LIMIT 20"
+  source_strings_replaced:
+    - "Starrez"
+    - "IBISWorld"
+    - "Datarock"
+    - "ecoPortal"
+    - "Imdex"
+    - "Hectre"
+    - "StockDoctor"
+    - "Roller"
+    - "Tyro Payments"
+  derived_workstation_template_location: "templates/04_Accounts/Active/_TEMPLATE/"
+  sfdc_fields_seeded_into_memory:
+    - Account_Name
+    - Opportunity_Id
+    - Account_Id
+    - StageName
+    - CloseDate
+    - Net_ARR__c
+    - Owner_Name
+    - Account_Industry
+    - Account_AnnualRevenue
+    - Account_NumberOfEmployees
+
+# -----------------------------------------------------------------------------
+# Section 7. Files that ship as-is (no templating needed).
+# -----------------------------------------------------------------------------
+
+files_ship_as_is:
+  - "00_Resources/operating-model.md"
+  - "00_Resources/pendo-values.md"
+  - "00_Resources/communication-profile.md"
+  - "00_Resources/connectors.md"
+  - "00_Resources/competitive-intel/"
+  - "00_Resources/brand/"
+  - "System/cep-stages.yaml"
+  - "System/pillars.yaml"
+  - "System/Backlog.md"
+  - "Templates/Company_Template.md"
+  - "Templates/Meeting_Template.md"
+  - "Templates/Person_Template.md"
+  - "Templates/Project_Template.md"
+  - "06_Functions/_TEMPLATE/CLAUDE.md"
+  - "06_Functions/_TEMPLATE/MEMORY.md"
+  - "06_Functions/README.md"
+
+# -----------------------------------------------------------------------------
+# Section 8. Files needing minor de-personalisation.
+# -----------------------------------------------------------------------------
+
+files_minor_fix:
+  "00_Resources/voice-principles.md":
+    - "Title and sign-off examples (Cheers, Chris / Thanks, Chris / Best regards, Chris)"
+  "00_Resources/salesforce-fields.md":
+    - "Three lines (around 15-17) referencing Chris by name and Net_ARR metric specifically."
+  "Templates/Rep_Template.md":
+    - "Line 6 manager: Chris McCarney -> manager: {manager_name}"
+    - "Line 29 reference to Chris -> {user_first_name}"
+
+# -----------------------------------------------------------------------------
+# Section 9. Files needing full templating.
+# -----------------------------------------------------------------------------
+
+files_full_template:
+  - "CLAUDE.md"
+  - "MEMORY.md"
+  - "GETTING_STARTED.md"
+  - "README.md"  # Keep, but verify
+  - "System/team.yaml"  # ships as team.example.yaml only; /setup writes the real one
+  - "System/user-profile.yaml"  # ships as user-profile.example.yaml only
+
+# -----------------------------------------------------------------------------
+# Section 10. Skill prompts: runtime config-lookup conventions.
+# -----------------------------------------------------------------------------
+#
+# Skill prompts use {user_name}, {user_role}, {user_region}, {user_city},
+# {user_timezone} etc. as static placeholders substituted during /setup.
+# Team members, pillars, and accounts are NOT static placeholders; skills
+# must read from config at runtime.
+
+skill_runtime_lookups:
+  team:
+    pattern: "Read direct_reports, region_peers, manager from System/team.yaml at skill init."
+    affected_skills:
+      - daily-plan
+      - daily-review
+      - week-plan
+      - week-review
+      - meeting-prep
+      - process-meetings
+      - regenerate-pipeline
+  pillars:
+    pattern: "Read pillar names, descriptions, keywords from System/pillars.yaml at skill init."
+    affected_skills:
+      - daily-plan
+      - daily-review
+      - week-plan
+      - week-review
+      - meeting-prep
+      - process-meetings
+  active_accounts:
+    pattern: "Glob 04_Accounts/Active/*/ at skill run time, each folder is one workstation."
+    affected_skills:
+      - daily-plan
+      - meeting-prep
+      - process-meetings
+      - regenerate-pipeline
+  fiscal_calendar:
+    pattern: "Compute {fiscal_year_label} and {current_fiscal_quarter} at runtime from today's date plus {fiscal_year_start_month}."
+    affected_skills:
+      - regenerate-pipeline
+      - week-plan
+      - week-review

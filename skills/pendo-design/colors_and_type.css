@@ -1,0 +1,268 @@
+/* ==========================================================================
+   Pendo Brand Design System — Colors & Type
+   Source of truth: BRAND.md (FY27)
+   ========================================================================== */
+
+/* ---------- Fonts ----------
+   Sora + Inter: self-hosted variable fonts (single file covers 100–900).
+   JetBrains Mono: still loaded from Google Fonts — no local file yet.
+   ========================================================================== */
+@font-face {
+  font-family: "Sora";
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  src: url("fonts/Sora-Variable.ttf") format("truetype-variations"),
+       url("fonts/Sora-Variable.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Inter";
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  src: url("fonts/Inter-Variable.ttf") format("truetype-variations"),
+       url("fonts/Inter-Variable.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Inter";
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+  src: url("fonts/Inter-Italic-Variable.ttf") format("truetype-variations"),
+       url("fonts/Inter-Italic-Variable.ttf") format("truetype");
+}
+
+/* JetBrains Mono — still CDN until a local file is dropped in. */
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap");
+
+:root {
+  /* ---------- Primary palette ---------- */
+  --color-pendo-pink: #FF4876;
+  --color-black: #000000;
+  --color-graphite: #303030;
+  --color-light-mode: #EDEEE7;
+  --color-white: #FFFFFF;
+
+  /* ---------- Pink scale P1 → P8 ---------- */
+  --color-pink-1: #FF9ED7;
+  --color-pink-2: #FE82CE;
+  --color-pink-3: #FD6AA5;
+  --color-pink-4: #DB3DAD;
+  --color-pink-5: #D80574;
+  --color-pink-6: #BB076B;
+  --color-pink-7: #97127A;
+  --color-pink-8: #6C286A;
+
+  /* ---------- Warm neutrals ---------- */
+  --color-neutral-1: #C7C8C2;
+  --color-neutral-2: #A1A29E;
+  --color-neutral-3: #7C7C79;
+  --color-neutral-4: #565655;
+  --color-neutral-5: #181818;
+
+  /* ---------- Semantic — light mode (default) ---------- */
+  --bg: #EDEEE7;
+  --bg-card: #FFFFFF;
+  --bg-elevated: #EDEEE7;
+  --text-primary: #181818;
+  --text-secondary: #565655;
+  --text-muted: #A1A29E;
+  --border: #C7C8C2;
+  --border-subtle: #EDEEE7;
+  --accent: #FF4876;
+
+  /* ---------- Typography tokens ---------- */
+  --font-sans: "Inter", system-ui, -apple-system, Segoe UI, sans-serif;
+  --font-display: "Sora", "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Headline scale (desktop / marketing) */
+  --fs-h1: clamp(48px, 6vw, 96px);   /* Sora Bold */
+  --fs-h2: clamp(32px, 3.2vw, 48px); /* Inter Medium */
+  --fs-h3: clamp(22px, 1.8vw, 28px); /* Inter Regular */
+  --fs-eyebrow: 12px;                /* Inter Bold, ALL CAPS */
+  --fs-subhead: 20px;                /* Inter Regular */
+  --fs-body: 16px;                   /* Inter Regular */
+  --fs-small: 13px;
+  --fs-caption: 11px;
+
+  /* Slide scale (1920×1080) */
+  --fs-slide-hero: 96px;     /* Sora Bold 72pt */
+  --fs-slide-section: 64px;  /* Sora Bold 48pt */
+  --fs-slide-title: 40px;    /* Sora Bold 30pt */
+  --fs-slide-body: 22px;     /* Inter Regular */
+  --fs-slide-eyebrow: 16px;  /* Inter Bold, tracked */
+
+  --lh-tight: 1.05;
+  --lh-snug: 1.2;
+  --lh-normal: 1.5;
+
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-eyebrow: 0.22em; /* 3–5pt at 12pt ≈ 0.22em */
+
+  /* ---------- Spacing (8px base) ---------- */
+  --space-0: 0;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+  --space-10: 128px;
+
+  /* ---------- Radii ---------- */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;   /* cards */
+  --radius-xl: 16px;   /* outer wrapper cards */
+  --radius-pill: 999px;
+
+  /* ---------- Borders ---------- */
+  --stroke-hair: 1px;
+  --stroke-reg: 1.5px;
+  --stroke-bold: 2px;
+
+  /* ---------- Shadows (restrained — brand is flat + high-contrast) ---------- */
+  --shadow-xs: 0 1px 2px rgba(24, 24, 24, 0.06);
+  --shadow-sm: 0 2px 6px rgba(24, 24, 24, 0.08);
+  --shadow-md: 0 8px 24px rgba(24, 24, 24, 0.10);
+  --shadow-lg: 0 24px 60px rgba(24, 24, 24, 0.16);
+  --shadow-pink-glow: 0 0 0 4px rgba(255, 72, 118, 0.18);
+
+  /* ---------- Motion ---------- */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.76, 0, 0.24, 1);
+  --dur-fast: 140ms;
+  --dur-med: 240ms;
+  --dur-slow: 420ms;
+
+  /* ---------- Signature gradients ---------- */
+  --gradient-dark: radial-gradient(ellipse at 0% 50%, #FF9ED7 0%, #FD6AA5 25%, #D80574 50%, #97127A 75%, #000000 100%);
+  --gradient-light: radial-gradient(ellipse at 0% 50%, #97127A 0%, #D80574 25%, #FD6AA5 50%, #FF9ED7 75%, #EDEEE7 100%);
+  --gradient-dark-corner: radial-gradient(ellipse at 100% 0%, #FF9ED7 0%, #FD6AA5 20%, #D80574 45%, #97127A 70%, #000000 100%);
+  --gradient-light-corner: radial-gradient(ellipse at 100% 100%, #FF4876 0%, #FD6AA5 30%, #FF9ED7 60%, #EDEEE7 100%);
+  --gradient-top-glow: radial-gradient(ellipse at 50% 0%, #D80574 0%, #97127A 30%, #000000 70%);
+  --gradient-pink-bar: linear-gradient(90deg, #FF9ED7 0%, #FF4876 50%, #97127A 100%);
+}
+
+/* Dark-mode semantic tokens */
+[data-theme="dark"],
+.dark {
+  --bg: #000000;
+  --bg-card: #121212;
+  --bg-elevated: #181818;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A1A29E;
+  --text-muted: #7C7C79;
+  --border: #303030;
+  --border-subtle: #181818;
+  --accent: #FF4876;
+}
+
+/* ==========================================================================
+   Base element styles
+   ========================================================================== */
+html, body {
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: var(--lh-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+h1, .h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--fs-h1);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tracking-tight);
+  margin: 0;
+}
+
+h2, .h2 {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: var(--fs-h2);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--tracking-tight);
+  margin: 0;
+}
+
+h3, .h3 {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: var(--fs-h3);
+  line-height: var(--lh-snug);
+  margin: 0;
+}
+
+.eyebrow {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: var(--fs-eyebrow);
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-eyebrow);
+  color: var(--color-pendo-pink);
+}
+
+.subhead {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: var(--fs-subhead);
+  line-height: var(--lh-normal);
+  color: var(--text-secondary);
+}
+
+p, .body {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: var(--fs-body);
+  line-height: var(--lh-normal);
+}
+
+small, .caption {
+  font-size: var(--fs-caption);
+  color: var(--text-muted);
+}
+
+code, kbd, pre, .mono {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+}
+
+/* Utility: the signature pink rule */
+.pink-rule {
+  display: inline-block;
+  width: 44px;
+  height: 5px;
+  background: var(--color-pendo-pink);
+  border-radius: 2px;
+}
+
+/* Utility: pill / badge */
+.pendo-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border: 1.5px solid var(--color-pendo-pink);
+  color: var(--color-pendo-pink);
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: transparent;
+}
+.pendo-pill.filled {
+  background: var(--color-pendo-pink);
+  color: var(--color-white);
+}

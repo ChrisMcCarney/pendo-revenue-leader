@@ -1,0 +1,78 @@
+# Customer Engagement Process (CEP) Stage Definitions
+# Pendo's shared GTM process: stages 0-6, prospect to renewal.
+
+stages:
+  - id: 0
+    name: "Identify"
+    summary: "Prospect identified. Account research, ICP fit assessment."
+    gates:
+      - "Account researched"
+      - "ICP fit confirmed"
+      - "Initial outreach planned"
+    typical_duration_days: 7
+
+  - id: 1
+    name: "Engage"
+    summary: "First conversations. Discovery, qualification, MEDDPICC begins."
+    gates:
+      - "Discovery call held"
+      - "Pain identified"
+      - "Champion candidate emerging"
+      - "MEDDPICC initiated"
+    typical_duration_days: 14
+
+  - id: 2
+    name: "Evaluate"
+    summary: "Technical evaluation. Demo, reverse demo, POC, snippet, integration check."
+    gates:
+      - "Demo delivered"
+      - "Technical fit confirmed"
+      - "Snippet deployed (or equivalent)"
+      - "Decision criteria defined"
+    typical_duration_days: 30
+
+  - id: 3
+    name: "Business Case"
+    summary: "Value framing, ROI, business case, executive alignment."
+    gates:
+      - "Metrics quantified"
+      - "Economic Buyer engaged"
+      - "Business case delivered"
+      - "ROI agreed"
+    typical_duration_days: 21
+
+  - id: 4
+    name: "Technical Win"
+    summary: "Technical decision criteria validated. Champion confirmed. Procurement begins."
+    gates:
+      - "All technical criteria met"
+      - "Champion confirmed multi-thread"
+      - "Security review initiated"
+      - "Compelling event identified"
+    typical_duration_days: 14
+
+  - id: 5
+    name: "Commercial Close"
+    summary: "Pricing, contracts, signature."
+    gates:
+      - "Pricing agreed"
+      - "MSA / order form in legal"
+      - "Signature path confirmed"
+    typical_duration_days: 14
+
+  - id: 6
+    name: "Implementation & Success"
+    summary: "Onboarding, adoption, expansion, renewal. CE remains involved."
+    gates:
+      - "Implementation kickoff held"
+      - "Initial use cases live"
+      - "Adoption metrics tracking"
+      - "Renewal owner identified"
+    typical_duration_days: 365  # ongoing
+
+# Stage transition rules
+transition_rules:
+  forward: "All gates of the current stage must be met"
+  backward: "Allowed any time; flag the reason in workstation MEMORY.md"
+  closed_lost: "Allowed from any stage; capture loss reason in workstation MEMORY.md"
+  closed_won: "Only from stage 5 forward to stage 6"

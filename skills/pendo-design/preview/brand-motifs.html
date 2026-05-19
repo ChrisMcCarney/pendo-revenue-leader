@@ -1,0 +1,129 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Signature motifs</title>
+<link rel="stylesheet" href="_preview.css">
+<style>
+  .grid4 { display:grid; grid-template-columns: repeat(4,1fr); gap:12px; }
+
+  /* Motif tile — light mode is the default */
+  .m {
+    padding:16px;
+    border-radius:12px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    align-items:flex-start;
+    min-height:120px;
+    justify-content:space-between;
+    font-family: Inter, sans-serif;
+    font-size:11px;
+  }
+  .m.lt { background:#fff; border:1px solid #C7C8C2; color:#181818; }
+  .m.dk { background:#000; color:#fff; }
+
+  .eye { font-weight:700; font-size:11px; letter-spacing:0.22em; color:#FF4876; }
+  .rule { height:4px; width:36px; background:#FF4876; border-radius:2px; }
+  .ck { color:#FF4876; font-weight:700; }
+
+  .m.lt .caption { color:#7C7C79; font-size:10px; }
+  .m.dk .caption { color:#A1A29E; font-size:10px; }
+
+  /* Pink icon tile — generic slot, accepts any Lucide icon */
+  .icon-wrap {
+    width:40px; height:40px; border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    background: rgba(255, 72, 118, 0.12);
+  }
+  .icon-wrap svg { width:22px; height:22px; stroke-width:1.75; color:#FF4876; }
+  .m.dk .icon-wrap { background: rgba(255, 72, 118, 0.18); }
+
+  /* Number circle */
+  .numc {
+    width:30px; height:30px; border-radius:999px; border:1.5px solid #FF4876;
+    color:#FF4876; display:inline-flex; align-items:center; justify-content:center;
+    font-size:14px; font-weight:500;
+  }
+
+  .sub { font-family: var(--font-sans); font-size:11px; color: var(--text-secondary); font-weight:600; letter-spacing:0.06em; text-transform:uppercase; margin: 6px 0 2px; }
+
+  .iconrow { display:flex; gap:6px; flex-wrap:wrap; margin-top:4px; }
+  .mini-wrap { width:26px; height:26px; border-radius:6px; display:flex; align-items:center; justify-content:center; background:rgba(255,72,118,0.12); }
+  .mini-wrap svg { width:15px; height:15px; stroke-width:1.75; color:#FF4876; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="label">Signature brand motifs · light is default</div>
+
+  <div class="sub">Light mode</div>
+  <div class="grid4">
+    <div class="m lt">
+      <div class="eye">LISTEN</div>
+      <div class="rule"></div>
+      <div class="caption">Eyebrow + pink rule</div>
+    </div>
+    <div class="m lt">
+      <div style="display:flex;gap:8px;align-items:center"><span class="ck">✔</span><span>Ship faster</span></div>
+      <div style="display:flex;gap:8px;align-items:center"><span class="ck">→</span><span>Measure impact</span></div>
+      <div class="caption">Pink check / arrow bullets</div>
+    </div>
+    <div class="m lt" style="align-items:center; justify-content:center; text-align:center; gap:14px;">
+      <div class="icon-wrap" data-icon="zap"></div>
+      <div class="caption">Pink icon · any Lucide glyph</div>
+    </div>
+    <div class="m lt">
+      <div style="display:flex;gap:10px;align-items:center"><span class="numc">1</span><span>Agenda</span></div>
+      <div class="caption">Number circle</div>
+    </div>
+  </div>
+
+  <div class="sub">Dark mode</div>
+  <div class="grid4">
+    <div class="m dk">
+      <div class="eye">LISTEN</div>
+      <div class="rule"></div>
+      <div class="caption">Eyebrow + pink rule</div>
+    </div>
+    <div class="m dk">
+      <div style="display:flex;gap:8px;align-items:center"><span class="ck">✔</span><span>Ship faster</span></div>
+      <div style="display:flex;gap:8px;align-items:center"><span class="ck">→</span><span>Measure impact</span></div>
+      <div class="caption">Pink check / arrow bullets</div>
+    </div>
+    <div class="m dk" style="align-items:center; justify-content:center; text-align:center; gap:14px;">
+      <div class="icon-wrap" data-icon="sparkles"></div>
+      <div class="caption">Pink icon · any Lucide glyph</div>
+    </div>
+    <div class="m dk">
+      <div style="display:flex;gap:10px;align-items:center"><span class="numc">1</span><span>Agenda</span></div>
+      <div class="caption">Number circle</div>
+    </div>
+  </div>
+
+  <div class="sub">Icon swap examples</div>
+  <div class="iconrow">
+    <div class="mini-wrap" data-icon="zap"></div>
+    <div class="mini-wrap" data-icon="sparkles"></div>
+    <div class="mini-wrap" data-icon="heart"></div>
+    <div class="mini-wrap" data-icon="target"></div>
+    <div class="mini-wrap" data-icon="trending-up"></div>
+    <div class="mini-wrap" data-icon="users"></div>
+    <div class="mini-wrap" data-icon="lightbulb"></div>
+    <div class="mini-wrap" data-icon="rocket"></div>
+    <div class="mini-wrap" data-icon="compass"></div>
+    <div class="mini-wrap" data-icon="bar-chart-3"></div>
+    <div class="mini-wrap" data-icon="message-circle"></div>
+    <div class="mini-wrap" data-icon="play"></div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+  function toPascal(kebab) {
+    return kebab.split('-').map(s => s[0].toUpperCase() + s.slice(1)).join('');
+  }
+  document.querySelectorAll('[data-icon]').forEach(el => {
+    const key = toPascal(el.dataset.icon);
+    const icon = lucide.icons[key];
+    if (icon) el.appendChild(lucide.createElement(icon));
+  });
+</script>
+</body></html>
