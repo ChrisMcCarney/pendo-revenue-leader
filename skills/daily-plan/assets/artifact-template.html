@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<script type="application/json" id="cowork-artifact-meta">
+{
+  "name": "Daily command centre - {{TODAY_ISO}}",
+  "schemaVersion": 1,
+  "description": "Live daily dashboard for {{USER_NAME}}: calendar with SFDC drift chips, Tasks.md board, Slack and Gmail inbox triage, and a static methodology tab.",
+  "mcpTools": ["{{SOQL_TOOL}}"],
+  "mcpServerNames": ["Salesforce Prod"]
+}
+</script>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily command centre - {{TODAY_HUMAN}}</title>
+<style>
+/* ==========================================================================
+   Pendo FY27 brand tokens (subset, inlined for the artifact sandbox).
+   Mirror of pendo-design/colors_and_type.css.
+   ========================================================================== */
+:root {
+  color-scheme: dark;
+
+  --color-pendo-pink: #FF4876;
+  --color-black: #000000;
+  --color-graphite: #303030;
+  --color-light-mode: #EDEEE7;
+  --color-white: #FFFFFF;
+
+  --color-pink-1: #FF9ED7;
+  --color-pink-2: #FE82CE;
+  --color-pink-3: #FD6AA5;
+  --color-pink-5: #D80574;
+  --color-pink-7: #97127A;
+
+  --color-neutral-1: #C7C8C2;
+  --color-neutral-2: #A1A29E;
+  --color-neutral-3: #7C7C79;
+  --color-neutral-4: #565655;
+  --color-neutral-5: #181818;
+
+  --bg: #000000;
+  --bg-card: #121212;
+  --bg-elevated: #181818;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A1A29E;
+  --text-muted: #7C7C79;
+  --border: #303030;
+  --border-subtle: #181818;
+
+  --color-go: #4FC08D;
+  --color-go-soft: rgba(79, 192, 141, 0.18);
+  --color-amber: #F5B544;
+  --color-amber-soft: rgba(245, 181, 68, 0.18);
+
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Sora", "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --tracking-tight: -0.02em;
+  --tracking-eyebrow: 0.22em;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-pill: 999px;
+
+  --shadow-pink-glow: 0 0 0 4px rgba(255, 72, 118, 0.18);
+
+  --gradient-top-glow: radial-gradient(ellipse at 0% 0%, rgba(216, 5, 116, 0.55) 0%, rgba(151, 18, 122, 0.30) 25%, rgba(0, 0, 0, 0) 60%);
+  --gradient-pink-bar: linear-gradient(90deg, #FF9ED7 0%, #FF4876 50%, #97127A 100%);
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 140ms;
+}
+
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.page {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 24px;
+  position: relative;
+}
+.page::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 60%;
+  height: 320px;
+  background: var(--gradient-top-glow);
+  pointer-events: none;
+  z-index: 0;
+}
+.page > * { position: relative; z-index: 1; }
+
+/* ==========================================================================
+   Header
+   ========================================================================== */
+.header {
+  background: var(--bg-card);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border);
+  padding: 28px 32px;
+  margin-bottom: 16px;
+}
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+.eyebrow {
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-eyebrow);
+  color: var(--color-pendo-pink);
+  display: inline-block;
+  margin-bottom: 12px;
+}
+.header h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 1.05;
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-primary);
+}
+.header .sub {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 8px;
+}
+.pink-rule {
+  display: inline-block;
+  width: 44px; height: 5px;
+  background: var(--color-pendo-pink);
+  border-radius: 2px;
+  margin-bottom: 12px;
+}
+.user-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border: 1.5px solid var(--color-pendo-pink);
+  color: var(--color-pendo-pink);
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: transparent;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.brief {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--text-primary);
+}
+.brief .eyebrow { margin-bottom: 8px; }
+
+/* ==========================================================================
+   Tabs
+   ========================================================================== */
+.tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.tab {
+  padding: 14px 20px;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  border: none;
+  background: transparent;
+  border-bottom: 2px solid transparent;
+  transition: color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out);
+}
+.tab.active {
+  color: var(--color-pendo-pink);
+  border-bottom-color: var(--color-pendo-pink);
+}
+.tab:hover:not(.active) { color: var(--text-primary); }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ==========================================================================
+   Section cards
+   ========================================================================== */
+.section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 16px;
+}
+.sec-title {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.badge-count {
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  font-size: 11px;
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  border: 1px solid var(--border);
+}
+
+/* ==========================================================================
+   Calendar timeline (Day tab)
+   ========================================================================== */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.event {
+  display: grid;
+  grid-template-columns: 78px 1fr auto;
+  gap: 16px;
+  align-items: start;
+  padding: 14px 16px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+.event.focus {
+  border-style: dashed;
+  background: transparent;
+}
+.event.no-book {
+  opacity: 0.55;
+}
+.event-time {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.event-body { min-width: 0; }
+.event-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+.event-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+.event-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+/* Drift chip - sits on each event tagged to a live account. */
+.drift {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  text-transform: uppercase;
+  font-family: var(--font-sans);
+}
+.drift.checking {
+  background: var(--bg-card);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+.drift.aligned {
+  background: var(--color-go-soft);
+  color: var(--color-go);
+}
+.drift.drifted {
+  background: var(--color-pendo-pink);
+  color: var(--color-white);
+}
+.drift.unavailable {
+  background: transparent;
+  color: var(--color-neutral-3);
+  border: 1px solid var(--color-neutral-4);
+}
+
+.drift-detail {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  text-align: right;
+  max-width: 220px;
+  line-height: 1.4;
+}
+
+/* ==========================================================================
+   Critical-from-pipeline-changes card (Day tab inline)
+   ========================================================================== */
+.changes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.change-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 12px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--color-pendo-pink);
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  line-height: 1.5;
+}
+.change-row.notable {
+  border-left-color: var(--color-amber);
+}
+.change-sev {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-pendo-pink);
+  white-space: nowrap;
+}
+.change-row.notable .change-sev {
+  color: var(--color-amber);
+}
+
+/* ==========================================================================
+   Tasks tab
+   ========================================================================== */
+.task-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  gap: 12px;
+}
+.task-toolbar .left { font-size: 12px; color: var(--text-secondary); }
+
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.task {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 12px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  transition: border-color var(--dur-fast) var(--ease-out);
+}
+.task:hover { border-color: var(--color-neutral-4); }
+.task.done .task-text { text-decoration: line-through; color: var(--text-muted); }
+.task input[type="checkbox"] {
+  width: 16px; height: 16px;
+  accent-color: var(--color-pendo-pink);
+  cursor: pointer;
+}
+.task-text {
+  font-size: 13px;
+  color: var(--text-primary);
+  word-break: break-word;
+}
+.task-meta {
+  margin-top: 4px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.task-actions {
+  display: flex;
+  gap: 6px;
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease-out);
+}
+.task:hover .task-actions { opacity: 1; }
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.pill-pillar {
+  background: rgba(79, 192, 141, 0.16);
+  color: var(--color-go);
+}
+.pill-people {
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+.pill-p0 { background: var(--color-pendo-pink); color: var(--color-white); }
+.pill-p1 { background: var(--color-amber-soft); color: var(--color-amber); }
+.pill-p2 { background: var(--color-go-soft); color: var(--color-go); }
+
+.btn {
+  padding: 6px 12px;
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out);
+}
+.btn:hover { color: var(--text-primary); border-color: var(--color-neutral-3); }
+.btn-primary {
+  background: var(--color-pendo-pink);
+  color: var(--color-white);
+  border-color: var(--color-pendo-pink);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 8px 16px;
+}
+.btn-primary:hover { background: #E53B66; color: var(--color-white); }
+.btn-primary.saved { background: var(--color-neutral-4); border-color: var(--color-neutral-4); }
+
+.add-task-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+.add-task-row input[type="text"] {
+  flex: 1;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  outline: none;
+}
+.add-task-row input[type="text"]:focus {
+  border-color: var(--color-pendo-pink);
+  box-shadow: var(--shadow-pink-glow);
+}
+
+/* ==========================================================================
+   Inbox tab
+   ========================================================================== */
+.inbox-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.inbox-row {
+  display: grid;
+  grid-template-columns: 64px 1fr auto;
+  gap: 12px;
+  align-items: start;
+  padding: 12px 14px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+.inbox-source {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-pendo-pink);
+  white-space: nowrap;
+  padding-top: 2px;
+}
+.inbox-body { min-width: 0; }
+.inbox-sender { font-size: 12px; font-weight: 600; color: var(--text-primary); }
+.inbox-snippet {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-height: 1.45;
+}
+.inbox-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+.inbox-status {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: var(--radius-pill);
+}
+.inbox-status.captured { background: var(--color-go-soft); color: var(--color-go); }
+.inbox-status.open { background: transparent; color: var(--color-pendo-pink); border: 1px solid var(--color-pendo-pink); }
+.inbox-link {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-decoration: none;
+}
+.inbox-link:hover { color: var(--color-pendo-pink); }
+
+/* ==========================================================================
+   Methodology + shared text styles
+   ========================================================================== */
+.method-prose {
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--text-secondary);
+  max-width: 780px;
+}
+.method-prose h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--text-primary);
+  margin: 8px 0 12px;
+}
+.method-prose ul {
+  padding-left: 20px;
+  line-height: 1.85;
+}
+.method-prose code,
+.section code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: var(--bg-elevated);
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+}
+
+table { width: 100%; border-collapse: collapse; }
+th {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--color-pendo-pink);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-eyebrow);
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+td {
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 12px;
+  vertical-align: top;
+  color: var(--text-primary);
+}
+tr:last-child td { border-bottom: none; }
+
+/* ==========================================================================
+   Loading + error states + footer
+   ========================================================================== */
+.empty {
+  text-align: center;
+  padding: 24px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+.loading-inline {
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+}
+.err {
+  background: rgba(216, 5, 116, 0.15);
+  border: 1px solid var(--color-pink-5);
+  color: var(--color-pendo-pink);
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+.footer {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-muted);
+  padding: 16px 0 8px;
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 900px) {
+  .header h1 { font-size: 24px; }
+  .event { grid-template-columns: 64px 1fr; }
+  .event-actions { grid-column: 1 / -1; flex-direction: row; }
+  .inbox-row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-row">
+      <div>
+        <span class="eyebrow">Daily command centre</span>
+        <div class="pink-rule"></div>
+        <h1>Today, {{TODAY_HUMAN}}</h1>
+        <div class="sub" id="hdr-sub">{{USER_TIMEZONE}} · live Salesforce drift on the Day tab</div>
+      </div>
+      <div class="user-badge">{{USER_NAME}} · {{USER_TITLE}}</div>
+    </div>
+  </div>
+
+  <!-- BRIEF -->
+  <div class="brief" id="brief">
+    <span class="eyebrow">What matters</span>
+    <div class="pink-rule"></div>
+    <div id="brief-body"></div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" id="tab-btn-day" onclick="switchTab('day')">Day</button>
+    <button class="tab" id="tab-btn-tasks" onclick="switchTab('tasks')">Tasks</button>
+    <button class="tab" id="tab-btn-inbox" onclick="switchTab('inbox')">Inbox</button>
+    <button class="tab" id="tab-btn-methodology" onclick="switchTab('methodology')" style="margin-left:auto">Methodology</button>
+  </div>
+
+  <!-- DAY TAB -->
+  <div class="tab-content active" id="tab-day">
+    <div class="section">
+      <div class="sec-title">Calendar <span class="badge-count" id="cal-ct">0</span></div>
+      <div id="timeline" class="timeline"></div>
+    </div>
+
+    <div class="section" id="changes-section">
+      <div class="sec-title">Pipeline changes today <span class="badge-count" id="changes-ct">0</span></div>
+      <div id="changes" class="changes"></div>
+    </div>
+  </div>
+
+  <!-- TASKS TAB -->
+  <div class="tab-content" id="tab-tasks">
+    <div class="section">
+      <div class="task-toolbar">
+        <div class="left">
+          This week section of <code>02_Tasks/Tasks.md</code>, sorted by priority. Hover a row for edit and remove actions.
+        </div>
+        <button class="btn-primary" id="tasks-save-btn" onclick="saveTasks()">Save changes to Tasks.md</button>
+      </div>
+      <div id="task-list" class="task-list"></div>
+      <div class="add-task-row">
+        <input type="text" id="new-task-input" placeholder="New task (use [pillar] for tag, |person for owner, P0 / P1 / P2 for priority)" />
+        <button class="btn" onclick="addTask()">Add task</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- INBOX TAB -->
+  <div class="tab-content" id="tab-inbox">
+    <div class="section">
+      <div class="sec-title">Slack and Gmail needing action <span class="badge-count" id="inbox-ct">0</span></div>
+      <div class="loading-inline" style="margin-bottom:12px">Snapshot from when the artifact was built. Reload <code>/daily-plan</code> for fresh items.</div>
+      <div id="inbox-list" class="inbox-list"></div>
+    </div>
+  </div>
+
+  <!-- METHODOLOGY TAB (static) -->
+  <div class="tab-content" id="tab-methodology">
+    <div class="section">
+      <span class="eyebrow">What this dashboard is</span>
+      <div class="pink-rule"></div>
+      <h2 style="font-family:var(--font-display);font-weight:700;font-size:24px;line-height:1.1;letter-spacing:var(--tracking-tight);color:var(--text-primary);margin:8px 0 16px">A live read of today, not a forecast</h2>
+      <div class="method-prose">
+        The Daily command centre sits on top of the same data <code>/daily-plan</code> writes to <code>01_Inbox/Daily_Plans/{date}.md</code>. The markdown file is the audit log. This artifact is the interactive surface: a single pane for what matters today, what is drifting in Salesforce, what is on the calendar, what is in the punch list, and what is sitting in the inbox.
+      </div>
+    </div>
+
+    <div class="section">
+      <span class="eyebrow">When data is fresh</span>
+      <div class="pink-rule"></div>
+      <div class="method-prose">
+        <h3>Build-time vs view-time</h3>
+        <table>
+          <thead>
+            <tr><th>Surface</th><th>When pulled</th><th>Why</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Calendar timeline</td>
+              <td>Build time (when <code>/daily-plan</code> ran)</td>
+              <td>Calendar mutations within the day are rare and the artifact would re-render on every reload, which is noisy. Reload <code>/daily-plan</code> mid-day if your calendar shifts.</td>
+            </tr>
+            <tr>
+              <td>Drift chips on calendar events</td>
+              <td><strong>View time</strong>, every reload</td>
+              <td>Salesforce changes through the day. The chip turns Pank if any of stage, close date, net ARR, or risk level disagrees with the baseline captured at build time from the workstation <code>MEMORY.md</code>.</td>
+            </tr>
+            <tr>
+              <td>Pipeline changes today</td>
+              <td>Build time, from <code>08_Pipeline/changes/{date}.md</code></td>
+              <td>The change log is itself rebuilt by <code>/regenerate-pipeline</code>. Run that skill first if you want fresher diffs.</td>
+            </tr>
+            <tr>
+              <td>Tasks board</td>
+              <td>Build time, from <code>02_Tasks/Tasks.md</code></td>
+              <td>Editing in the artifact never writes directly. Pressing Save sends the full markdown back to chat so Claude writes it to disk under your review.</td>
+            </tr>
+            <tr>
+              <td>Inbox triage</td>
+              <td>Build time, from Slack and Gmail MCP calls</td>
+              <td>Inbox MCP tools are not modelled for view-time querying inside the Cowork sandbox. Reload <code>/daily-plan</code> for fresh items.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="section">
+      <span class="eyebrow">Drift detection logic</span>
+      <div class="pink-rule"></div>
+      <div class="method-prose">
+        <h3>How the chip is calculated</h3>
+        <p>Each calendar event tagged to a Salesforce opportunity has a baseline snapshot of <code>StageName</code>, <code>CloseDate</code>, <code>Net_ARR__c</code>, and <code>SE_Risk_Level__c</code> captured when <code>/daily-plan</code> ran. At view time, the artifact runs a single SOQL query to fetch the current values for all tagged opportunities, then compares field by field:</p>
+        <ul>
+          <li><strong>Aligned</strong>: all four fields match the baseline. Green chip.</li>
+          <li><strong>Drifted</strong>: any field disagrees. Pank chip. Hover the row to see the specific diffs.</li>
+          <li><strong>Unavailable</strong>: Salesforce is not reachable or the opportunity ID is no longer queryable. Grey outlined chip.</li>
+        </ul>
+        <p>Drift detection is descriptive, not prescriptive. A drifted chip means the workstation memory is stale, not that the deal has changed for the worse.</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <span class="eyebrow">Source of truth</span>
+      <div class="pink-rule"></div>
+      <div class="method-prose">
+        <ul>
+          <li>Salesforce for stage, close date, net ARR, risk level. Always.</li>
+          <li><code>02_Tasks/Tasks.md</code> for the punch list. Edits in the artifact propose changes, they do not commit.</li>
+          <li><code>System/user-profile.yaml</code> for timezone, role, fiscal calendar. Edit there if these are wrong.</li>
+          <li><code>System/pillars.yaml</code> for pillar names. Pillar pills on the Tasks tab read from this list.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section">
+      <span class="eyebrow">What this is not</span>
+      <div class="pink-rule"></div>
+      <div class="method-prose">
+        <ul>
+          <li>Not a replacement for the markdown brief. <code>01_Inbox/Daily_Plans/{date}.md</code> is still written and still read by <code>/daily-review</code>, <code>/week-plan</code>, and <code>/week-review</code>.</li>
+          <li>Not a pipeline review. That surface is owned by <code>/avp-pipeline-review</code>. Drift chips here are a tripwire, not a full read.</li>
+          <li>Not a cross-day rollup. This is today only. Weekly views live in <code>/week-plan</code> and <code>/week-review</code>.</li>
+          <li>Not a write-through. Every persistent change goes back through chat for review before disk.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer" id="footer"></div>
+</div>
+
+<script>
+/* ==========================================================================
+   Pre-baked data (substituted by the skill at build time)
+   ========================================================================== */
+const NARRATIVE_BRIEF   = {{NARRATIVE_BRIEF}};
+const CALENDAR          = {{CALENDAR_JS}};
+const ACCOUNT_BASELINES = {{ACCOUNT_BASELINES_JS}};
+const TASKS_MD          = {{TASKS_MD}};
+const INBOX             = {{INBOX_JS}};
+const PIPELINE_CHANGES  = {{PIPELINE_CHANGES_MD}};
+const ACTIVE_ACCOUNTS   = {{ACTIVE_ACCOUNTS_JS}};
+const PILLARS           = {{PILLARS_JS}};
+const SOQL_TOOL         = '{{SOQL_TOOL}}';
+const TODAY_ISO         = '{{TODAY_ISO}}';
+const USER_TIMEZONE     = '{{USER_TIMEZONE}}';
+
+/* ==========================================================================
+   Tab switching
+   ========================================================================== */
+function switchTab(t) {
+  ['day', 'tasks', 'inbox', 'methodology'].forEach(name => {
+    const btn = document.getElementById('tab-btn-' + name);
+    if (btn) btn.classList.toggle('active', name === t);
+  });
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-' + t).classList.add('active');
+}
+
+/* ==========================================================================
+   Helpers
+   ========================================================================== */
+const escapeHtml = s => (s == null ? '' : String(s))
+  .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+
+const fmtMoney = n => {
+  if (n == null || isNaN(n)) return '-';
+  const a = Math.abs(n);
+  if (a >= 1e6) return '$' + (n / 1e6).toFixed(2).replace(/\.?0+$/, '') + 'M';
+  if (a >= 1e3) return '$' + Math.round(n / 1e3) + 'K';
+  return '$' + Math.round(n);
+};
+
+const fmtDate = d => {
+  if (!d) return '-';
+  return new Date(d + 'T00:00:00').toLocaleDateString('en-AU', { month: 'short', day: 'numeric' });
+};
+
+function sendPromptOrFallback(text) {
+  if (window.cowork && typeof window.cowork.sendPrompt === 'function') {
+    window.cowork.sendPrompt(text);
+    return true;
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text);
+    alert('Cowork bridge not available. The proposed change has been copied to your clipboard, paste it back to Claude to apply.');
+    return false;
+  }
+  alert('Cowork bridge not available and clipboard access denied. Open the artifact dev tools and copy the change manually.');
+  return false;
+}
+
+/* ==========================================================================
+   Render: brief
+   ========================================================================== */
+document.getElementById('brief-body').innerHTML = escapeHtml(NARRATIVE_BRIEF || '').replace(/\n/g, '<br>');
+
+/* ==========================================================================
+   Render: calendar timeline
+   ========================================================================== */
+function renderTimeline() {
+  const el = document.getElementById('timeline');
+  document.getElementById('cal-ct').textContent = CALENDAR.length;
+  if (!CALENDAR.length) {
+    el.innerHTML = '<div class="empty">No events on the calendar today.</div>';
+    return;
+  }
+  el.innerHTML = CALENDAR.map((ev, i) => {
+    const classes = ['event'];
+    if (ev.is_focus) classes.push('focus');
+    if (ev.is_no_book_over) classes.push('no-book');
+    const timeStr = ev.end ? (ev.time + ' - ' + ev.end) : ev.time;
+    const meta = [];
+    if (ev.attendees) meta.push(escapeHtml(ev.attendees));
+    if (ev.account_folder) meta.push(escapeHtml(ev.account_folder));
+    if (ev.note) meta.push(escapeHtml(ev.note));
+    const driftChip = ev.opp_id
+      ? '<span class="drift checking" data-opp-id="' + escapeHtml(ev.opp_id) + '" id="drift-' + i + '">Checking</span>'
+      : '';
+    const driftDetail = ev.opp_id
+      ? '<div class="drift-detail" id="drift-detail-' + i + '"></div>'
+      : '';
+    return '<div class="event ' + classes.join(' ') + '">' +
+             '<div class="event-time">' + escapeHtml(timeStr) + '</div>' +
+             '<div class="event-body">' +
+               '<div class="event-title">' + escapeHtml(ev.title) + '</div>' +
+               '<div class="event-meta">' + meta.join(' · ') + '</div>' +
+             '</div>' +
+             '<div class="event-actions">' + driftChip + driftDetail + '</div>' +
+           '</div>';
+  }).join('');
+}
+
+/* ==========================================================================
+   Render: pipeline changes (build-time markdown)
+   ========================================================================== */
+function renderChanges() {
+  const ct = document.getElementById('changes-ct');
+  const body = document.getElementById('changes');
+  const section = document.getElementById('changes-section');
+
+  if (!PIPELINE_CHANGES || !PIPELINE_CHANGES.trim()) {
+    section.style.display = 'none';
+    return;
+  }
+
+  // Parse a very simple format: lines starting with "- [Critical]" / "- [Notable]" / "- [Info]"
+  // emitted by /regenerate-pipeline. Fall back to a single block if no recognised lines.
+  const lines = PIPELINE_CHANGES.split('\n');
+  const items = [];
+  const re = /^\s*-\s*\[(Critical|Notable|Info)\]\s*(.+)$/i;
+  lines.forEach(ln => {
+    const m = ln.match(re);
+    if (m) items.push({ sev: m[1].toLowerCase(), text: m[2] });
+  });
+  // Only surface Critical and Notable on the Day tab.
+  const shown = items.filter(it => it.sev === 'critical' || it.sev === 'notable');
+  ct.textContent = shown.length;
+
+  if (!shown.length) {
+    body.innerHTML = '<div class="empty">No critical or notable pipeline changes today.</div>';
+    return;
+  }
+
+  body.innerHTML = shown.map(it =>
+    '<div class="change-row ' + (it.sev === 'notable' ? 'notable' : '') + '">' +
+      '<div class="change-sev">' + escapeHtml(it.sev) + '</div>' +
+      '<div>' + escapeHtml(it.text) + '</div>' +
+    '</div>'
+  ).join('');
+}
+
+/* ==========================================================================
+   Parse + render Tasks.md (This week section only)
+   ========================================================================== */
+let parsedTasks = { sections: {}, raw: TASKS_MD || '' };
+
+function parseTasks(md) {
+  const sections = { 'This Week': [], 'Next Week': [], 'Backlog': [], 'Done': [] };
+  let current = null;
+  const lines = md.split('\n');
+  const sectionRe = /^##\s+(This Week|Next Week|Backlog|Done)\b/i;
+  const taskRe = /^- \[( |x|X)\] (.+)$/;
+  const pillarRe = /\[([^\]\n]+?)\]/;
+  const peopleRe = /\|([A-Za-z][\w .'-]*)/g;
+  const prioRe = /\b(P[012])\b/;
+  const ctxRe = /\(from [^)]+\)/i;
+  const pillarSet = new Set(PILLARS.map(p => p.toLowerCase()));
+
+  lines.forEach((ln, idx) => {
+    const sm = ln.match(sectionRe);
+    if (sm) { current = sm[1].replace(/\b\w/g, c => c.toUpperCase()); return; }
+    if (!current || !sections[current]) return;
+    const tm = ln.match(taskRe);
+    if (!tm) return;
+
+    const done = tm[1].toLowerCase() === 'x';
+    let body = tm[2];
+
+    if (body.includes('{Task}')) return; // skip placeholder template lines
+
+    let pillar = null;
+    const pm = body.match(pillarRe);
+    if (pm && pillarSet.has(pm[1].toLowerCase())) {
+      pillar = pm[1];
+      body = body.replace(pm[0], '').trim();
+    }
+
+    const people = [];
+    let pp;
+    while ((pp = peopleRe.exec(body)) !== null) people.push(pp[1].trim());
+    body = body.replace(peopleRe, '').trim();
+    peopleRe.lastIndex = 0;
+
+    let priority = null;
+    const prm = body.match(prioRe);
+    if (prm) {
+      priority = prm[1];
+      body = body.replace(prioRe, '').trim();
+    }
+
+    let context = null;
+    const cm = body.match(ctxRe);
+    if (cm) {
+      context = cm[0];
+      body = body.replace(cm[0], '').trim();
+    }
+
+    body = body.replace(/\s+/g, ' ').trim();
+
+    sections[current].push({
+      done, text: body, pillar, people, priority, context,
+      rawLineIdx: idx
+    });
+  });
+
+  return { sections, raw: md, rawLines: lines };
+}
+
+function renderTasks() {
+  parsedTasks = parseTasks(TASKS_MD || '');
+  const list = parsedTasks.sections['This Week'] || [];
+  // Sort: P0 > P1 > P2 > unspecified; done items last.
+  const prioRank = p => p === 'P0' ? 0 : p === 'P1' ? 1 : p === 'P2' ? 2 : 3;
+  list.sort((a, b) => {
+    if (a.done !== b.done) return a.done ? 1 : -1;
+    return prioRank(a.priority) - prioRank(b.priority);
+  });
+
+  const el = document.getElementById('task-list');
+  if (!list.length) {
+    el.innerHTML = '<div class="empty">No tasks in the This Week section of Tasks.md.</div>';
+    return;
+  }
+  el.innerHTML = list.map((t, i) => {
+    const checked = t.done ? 'checked' : '';
+    const pills = [];
+    if (t.priority) pills.push('<span class="pill pill-' + t.priority.toLowerCase() + '">' + t.priority + '</span>');
+    if (t.pillar) pills.push('<span class="pill pill-pillar">' + escapeHtml(t.pillar) + '</span>');
+    t.people.forEach(p => pills.push('<span class="pill pill-people">' + escapeHtml(p) + '</span>'));
+    return '<div class="task ' + (t.done ? 'done' : '') + '" data-i="' + i + '">' +
+             '<input type="checkbox" ' + checked + ' onchange="toggleTask(' + i + ')">' +
+             '<div>' +
+               '<div class="task-text">' + escapeHtml(t.text) + '</div>' +
+               (pills.length || t.context
+                 ? '<div class="task-meta">' + pills.join('') +
+                   (t.context ? '<span class="pill pill-people">' + escapeHtml(t.context) + '</span>' : '') +
+                 '</div>'
+                 : '') +
+             '</div>' +
+             '<div class="task-actions">' +
+               '<button class="btn" onclick="editTask(' + i + ')">Edit</button>' +
+               '<button class="btn" onclick="removeTask(' + i + ')">Remove</button>' +
+             '</div>' +
+           '</div>';
+  }).join('');
+}
+
+function toggleTask(i) {
+  const t = (parsedTasks.sections['This Week'] || [])[i];
+  if (!t) return;
+  t.done = !t.done;
+  renderTasks();
+}
+
+function editTask(i) {
+  const t = (parsedTasks.sections['This Week'] || [])[i];
+  if (!t) return;
+  const next = prompt('Edit task text:', t.text);
+  if (next == null) return;
+  t.text = next.trim();
+  const nextPriority = prompt('Priority (P0, P1, P2, or empty):', t.priority || '');
+  if (nextPriority != null) {
+    const p = nextPriority.trim().toUpperCase();
+    t.priority = (p === 'P0' || p === 'P1' || p === 'P2') ? p : null;
+  }
+  const nextPillar = prompt('Pillar (' + PILLARS.join(', ') + ', or empty):', t.pillar || '');
+  if (nextPillar != null) {
+    const p = nextPillar.trim();
+    t.pillar = PILLARS.some(x => x.toLowerCase() === p.toLowerCase()) ? p : null;
+  }
+  renderTasks();
+}
+
+function removeTask(i) {
+  const t = (parsedTasks.sections['This Week'] || [])[i];
+  if (!t) return;
+  if (!confirm('Remove task: ' + t.text)) return;
+  parsedTasks.sections['This Week'].splice(i, 1);
+  renderTasks();
+}
+
+function addTask() {
+  const input = document.getElementById('new-task-input');
+  const raw = input.value.trim();
+  if (!raw) return;
+
+  let text = raw;
+  let pillar = null, priority = null;
+  const people = [];
+
+  const pillarRe = /\[([^\]\n]+?)\]/;
+  const pm = text.match(pillarRe);
+  if (pm && PILLARS.some(x => x.toLowerCase() === pm[1].toLowerCase())) {
+    pillar = pm[1];
+    text = text.replace(pm[0], '').trim();
+  }
+  const prioRe = /\b(P[012])\b/;
+  const prm = text.match(prioRe);
+  if (prm) { priority = prm[1]; text = text.replace(prioRe, '').trim(); }
+  const peopleRe = /\|([A-Za-z][\w .'-]*)/g;
+  let pp;
+  while ((pp = peopleRe.exec(text)) !== null) people.push(pp[1].trim());
+  text = text.replace(peopleRe, '').replace(/\s+/g, ' ').trim();
+
+  parsedTasks.sections['This Week'].push({
+    done: false, text, pillar, people, priority, context: null, rawLineIdx: -1
+  });
+  input.value = '';
+  renderTasks();
+}
+
+function rebuildTasksMd() {
+  // Preserve everything that is not "This Week" by rewriting only the This Week section.
+  const lines = (parsedTasks.raw || '').split('\n');
+  const headerRe = /^##\s+(This Week|Next Week|Backlog|Done)\b/i;
+  const out = [];
+  let i = 0;
+  let inThisWeek = false;
+  let consumedThisWeek = false;
+
+  while (i < lines.length) {
+    const ln = lines[i];
+    const hm = ln.match(headerRe);
+    if (hm) {
+      const label = hm[1].replace(/\b\w/g, c => c.toUpperCase());
+      if (label === 'This Week') {
+        out.push(ln); // keep the heading
+        // emit the rendered This Week tasks
+        (parsedTasks.sections['This Week'] || []).forEach(t => out.push(renderTaskLine(t)));
+        out.push(''); // blank line after section
+        inThisWeek = true;
+        consumedThisWeek = true;
+        // skip the original This Week body
+        i++;
+        while (i < lines.length && !lines[i].match(headerRe)) i++;
+        continue;
+      } else {
+        inThisWeek = false;
+      }
+    }
+    out.push(ln);
+    i++;
+  }
+
+  if (!consumedThisWeek) {
+    out.push('');
+    out.push('## This Week');
+    (parsedTasks.sections['This Week'] || []).forEach(t => out.push(renderTaskLine(t)));
+  }
+
+  return out.join('\n').replace(/\n{3,}/g, '\n\n');
+}
+
+function renderTaskLine(t) {
+  const box = t.done ? '[x]' : '[ ]';
+  const parts = [];
+  if (t.pillar) parts.push('[' + t.pillar + ']');
+  parts.push(t.text);
+  t.people.forEach(p => parts.push('|' + p));
+  if (t.priority) parts.push(t.priority);
+  if (t.context) parts.push(t.context);
+  return '- ' + box + ' ' + parts.join(' ');
+}
+
+function saveTasks() {
+  const newMd = rebuildTasksMd();
+  const btn = document.getElementById('tasks-save-btn');
+  const orig = btn.textContent;
+  const sent = sendPromptOrFallback(
+    'Update my Tasks.md with these changes from the Daily command centre. Here is the new content:\n\n```markdown\n' + newMd + '\n```'
+  );
+  if (sent) {
+    btn.textContent = 'Sent to chat';
+    btn.classList.add('saved');
+    setTimeout(() => { btn.textContent = orig; btn.classList.remove('saved'); }, 2400);
+  }
+}
+
+/* ==========================================================================
+   Render: inbox
+   ========================================================================== */
+function renderInbox() {
+  const ct = document.getElementById('inbox-ct');
+  const el = document.getElementById('inbox-list');
+  ct.textContent = INBOX.length;
+  if (!INBOX.length) {
+    el.innerHTML = '<div class="empty">Inbox is clear.</div>';
+    return;
+  }
+  el.innerHTML = INBOX.map((item, i) => {
+    const statusClass = item.captured_in_tasks ? 'captured' : 'open';
+    const statusLabel = item.captured_in_tasks ? 'Captured' : 'Open';
+    const link = item.permalink
+      ? '<a class="inbox-link" href="' + escapeHtml(item.permalink) + '" target="_blank" rel="noopener">Open</a>'
+      : '';
+    const captureBtn = item.captured_in_tasks
+      ? ''
+      : '<button class="btn" onclick="captureInbox(' + i + ')">Capture to Tasks</button>';
+    return '<div class="inbox-row">' +
+             '<div class="inbox-source">' + escapeHtml(item.source || '') + '</div>' +
+             '<div class="inbox-body">' +
+               '<div class="inbox-sender">' + escapeHtml(item.sender || '') + '</div>' +
+               '<div class="inbox-snippet">' + escapeHtml(item.snippet || '') + '</div>' +
+             '</div>' +
+             '<div class="inbox-actions">' +
+               '<span class="inbox-status ' + statusClass + '">' + statusLabel + '</span>' +
+               link +
+               captureBtn +
+             '</div>' +
+           '</div>';
+  }).join('');
+}
+
+function captureInbox(i) {
+  const item = INBOX[i];
+  if (!item) return;
+  const suggested = item.suggested_task || (item.sender + ': follow up on ' + (item.snippet || '').slice(0, 80));
+  sendPromptOrFallback(
+    'Add this to Tasks.md under This Week, from the Daily command centre inbox tab:\n\n- [ ] ' + suggested +
+    (item.permalink ? '\n\nSource: ' + item.permalink : '')
+  );
+}
+
+/* ==========================================================================
+   View-time SFDC drift query (Day tab)
+   ========================================================================== */
+async function runDriftQuery() {
+  const ids = Object.keys(ACCOUNT_BASELINES || {});
+  if (!ids.length) return;
+  if (!window.cowork || typeof window.cowork.callMcpTool !== 'function') {
+    document.querySelectorAll('.drift.checking').forEach(el => {
+      el.classList.remove('checking');
+      el.classList.add('unavailable');
+      el.textContent = 'No SFDC';
+    });
+    return;
+  }
+
+  const idList = ids.map(id => "'" + id + "'").join(',');
+  const q = "SELECT Id, StageName, CloseDate, Net_ARR__c, SE_Risk_Level__c " +
+            "FROM Opportunity WHERE Id IN (" + idList + ")";
+
+  let parsed;
+  try {
+    const res = await window.cowork.callMcpTool(SOQL_TOOL, { q });
+    if (!res || res.isError || !res.content || !res.content[0] || !res.content[0].text) {
+      throw new Error('Bad response from ' + SOQL_TOOL);
+    }
+    parsed = JSON.parse(res.content[0].text);
+  } catch (e) {
+    document.querySelectorAll('.drift.checking').forEach(el => {
+      el.classList.remove('checking');
+      el.classList.add('unavailable');
+      el.textContent = 'SFDC error';
+    });
+    const errEl = document.createElement('div');
+    errEl.className = 'err';
+    errEl.textContent = 'Could not load Salesforce drift data: ' + (e && e.message ? e.message : String(e));
+    document.querySelector('#tab-day .section').prepend(errEl);
+    return;
+  }
+
+  const liveById = {};
+  (parsed.records || []).forEach(r => { liveById[r.Id] = r; });
+
+  CALENDAR.forEach((ev, i) => {
+    if (!ev.opp_id) return;
+    const chip = document.getElementById('drift-' + i);
+    const detail = document.getElementById('drift-detail-' + i);
+    if (!chip) return;
+    const baseline = ACCOUNT_BASELINES[ev.opp_id];
+    const live = liveById[ev.opp_id];
+    if (!live) {
+      chip.classList.remove('checking');
+      chip.classList.add('unavailable');
+      chip.textContent = 'Not found';
+      return;
+    }
+    const diffs = [];
+    if (baseline.stage && live.StageName && baseline.stage !== live.StageName) {
+      diffs.push('Stage ' + baseline.stage + ' -> ' + live.StageName);
+    }
+    if (baseline.close_date && live.CloseDate && baseline.close_date !== live.CloseDate) {
+      diffs.push('Close ' + fmtDate(baseline.close_date) + ' -> ' + fmtDate(live.CloseDate));
+    }
+    const baseArr = baseline.net_arr != null ? Number(baseline.net_arr) : null;
+    const liveArr = live.Net_ARR__c != null ? Number(live.Net_ARR__c) : null;
+    if (baseArr != null && liveArr != null && baseArr !== liveArr) {
+      diffs.push('Net ARR ' + fmtMoney(baseArr) + ' -> ' + fmtMoney(liveArr));
+    }
+    if (baseline.risk && live.SE_Risk_Level__c && baseline.risk !== live.SE_Risk_Level__c) {
+      diffs.push('Risk ' + baseline.risk + ' -> ' + live.SE_Risk_Level__c);
+    }
+
+    chip.classList.remove('checking');
+    if (diffs.length) {
+      chip.classList.add('drifted');
+      chip.textContent = 'Drifted';
+      if (detail) detail.textContent = diffs.join(' · ');
+    } else {
+      chip.classList.add('aligned');
+      chip.textContent = 'Aligned';
+    }
+  });
+}
+
+/* ==========================================================================
+   Boot
+   ========================================================================== */
+renderTimeline();
+renderChanges();
+renderTasks();
+renderInbox();
+
+document.getElementById('footer').textContent =
+  'Built by /daily-plan · same content saved to 01_Inbox/Daily_Plans/' + TODAY_ISO + '.md';
+
+// Kick off SFDC drift in the background. Calendar still renders if it fails.
+runDriftQuery();
+</script>
+</body>
+</html>

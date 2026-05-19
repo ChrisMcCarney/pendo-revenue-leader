@@ -119,7 +119,110 @@ Skip this section if the day is balanced and nothing is slipping.
 
 After producing the brief in chat, write the same content to `01_Inbox/Daily_Plans/{YYYY-MM-DD}.md`. This file is read by `/week-plan` and `/week-review` to reconstruct the week. Use today's date in the user's timezone (from `System/user-profile.yaml`). Overwrite if the file already exists (re-running the skill replaces, doesn't append).
 
+---
+
+## Daily command centre artifact (live)
+
+After the markdown is written, render a Cowork artifact called the **Daily command centre**: a four-tab dashboard (Day, Tasks, Inbox, Methodology) backed by `assets/artifact-template.html` in this skill folder. This supplements the markdown brief, it does not replace it. The markdown remains the audit log read by `/daily-review`, `/week-plan`, and `/week-review`.
+
+**Brand inheritance is mandatory.** Before generating the artifact:
+
+1. Read the `pendo-design` skill's `SKILL.md`, `README.md`, and `BRAND.md` for the non-negotiable rules (Pank `#FF4876` as accent only, Sora Bold for display, Inter for body, sentence case headings, no emoji, radial gradients on edges, rounded card corners 12-16px).
+2. The template already inlines the brand tokens so the artifact renders correctly inside the Cowork sandbox. If the inlined tokens diverge from `pendo-design/colors_and_type.css`, fix the template before invoking the skill.
+3. Pank is reserved for: the active-tab indicator, drift chips on the Day tab, priority P0 pill, the eyebrow labels, and the brief card border. Never as a body-content background.
+
+### Step 1. Detect the Salesforce SOQL tool
+
+Scan available MCP tools for one whose name contains `soqlQuery`. Note the exact full tool name (for example `mcp__claude_ai_Salesforce_Prod__soqlQuery`). The artifact's JavaScript hardcodes this string so the rendered dashboard can query SFDC at view time for the Day-tab drift chips.
+
+If no SOQL tool is available, render the artifact anyway. The drift chips will degrade to a grey "No SFDC" state and the rest of the tabs work unchanged. Do not abort: a daily artifact without live drift is still useful.
+
+### Step 2. Gather build-time data
+
+Re-use everything the skill already pulled for the chat brief (calendar, Slack DMs, Gmail, `Tasks.md`, today's `08_Pipeline/changes/`, workstation MEMORYs). No new MCP calls are needed. Additionally, build the **account baselines** object: for each calendar event tagged to an active account folder, look up the opp from the workstation `MEMORY.md` and snapshot `{stage, close_date, net_arr, risk}` keyed by SFDC opportunity Id. This baseline is what view-time drift comparisons run against.
+
+### Step 3. Generate the artifact
+
+Read the template from `assets/artifact-template.html` in this skill folder. Apply the following substitutions:
+
+| Placeholder | Replace with |
+|-------------|--------------|
+| `{{SOQL_TOOL}}` | Exact MCP tool name detected in Step 1, or the literal string `none` if unavailable. |
+| `{{USER_NAME}}` | From `System/user-profile.yaml`. |
+| `{{USER_TITLE}}` | From `System/user-profile.yaml` `role`. |
+| `{{USER_TIMEZONE}}` | From `System/user-profile.yaml` `timezone`. |
+| `{{TODAY_ISO}}` | Today's date YYYY-MM-DD in the user's timezone. |
+| `{{TODAY_HUMAN}}` | Long form e.g. `Tuesday, May 19, 2026` in `en-AU` locale. |
+| `{{NARRATIVE_BRIEF}}` | The 3-5 sentence prose brief, JSON-string-encoded (use `JSON.stringify`). |
+| `{{CALENDAR_JS}}` | JS array literal of today's events. See "Calendar event shape" below. |
+| `{{ACCOUNT_BASELINES_JS}}` | JS object literal keyed by opp Id, value `{stage, close_date, net_arr, risk}`. |
+| `{{TASKS_MD}}` | Raw `02_Tasks/Tasks.md` content, JSON-string-encoded. |
+| `{{INBOX_JS}}` | JS array of Slack and Gmail items. See "Inbox item shape" below. |
+| `{{PIPELINE_CHANGES_MD}}` | Today's `08_Pipeline/changes/{date}.md` content JSON-string-encoded, or empty string `""`. |
+| `{{ACTIVE_ACCOUNTS_JS}}` | JS array of active account folder names from globbing `04_Accounts/Active/*/`. |
+| `{{PILLARS_JS}}` | JS array of pillar names from `System/pillars.yaml`. |
+
+**Calendar event shape** (one entry per event in the array):
+
+```js
+{
+  time: "09:30",                  // start time HH:MM in user timezone
+  end: "10:00",                   // optional end time
+  title: "Account A discovery",   // event title, sentence case where possible
+  attendees: "Champion A",        // short attendee summary, optional
+  note: "SFDC reconciled",        // one-line note, optional
+  account_folder: "Account A",    // folder name under 04_Accounts/Active/, optional
+  opp_id: "0061a000xxxxxxx",      // SFDC opportunity Id; required for drift chip
+  is_focus: false,                // true for [Focus] blocks
+  is_no_book_over: false          // true for DO NOT BOOK OVER blocks
+}
+```
+
+**Inbox item shape**:
+
+```js
+{
+  source: "Slack",                       // "Slack" or "Gmail"
+  sender: "@manager-handle",
+  snippet: "Needs your read on Q2...",
+  permalink: "https://...",              // optional
+  captured_in_tasks: false,              // true if a matching task already exists
+  suggested_task: "Reply to manager..."  // optional pre-filled task text for + Capture
+}
+```
+
+Then call the Cowork artifact-creation MCP tool (look for one with `artifact` in the name) with:
+
+- `name`: `Daily command centre - {YYYY-MM-DD}`
+- `description`: brief one-liner describing the artifact.
+- `mcpTools`: `[<SOQL_TOOL>]` (omit the entry if no SOQL tool was detected).
+- `html`: the fully substituted HTML.
+
+### Step 4. Template missing fallback
+
+If `assets/artifact-template.html` is missing from this skill folder, tell {user_first_name} verbatim:
+
+`The artifact template file at assets/artifact-template.html is missing from the daily-plan skill folder. Drop the template file in and run /daily-plan again. The markdown brief above is still saved and the standalone task board widget still works without it.`
+
+Do not fabricate the template. The markdown brief and the standalone task board widget remain available.
+
+### Step 5. Offer the static snapshot
+
+After the artifact is created, offer:
+
+`Want a shareable static snapshot? I can bake in the current view so you can email this to someone without needing a Cowork connection.`
+
+If yes:
+
+1. Re-render the template with the live SFDC data injected as static JS rather than a `callMcpTool` call.
+2. Save to `01_Inbox/Daily_Plans/snapshots/{YYYY-MM-DD}-command-centre.html`.
+3. Tell {user_first_name} the path.
+
+---
+
 ## Interactive task board (live artifact)
+
+**Note:** the same widget code described below is also rendered as the Tasks tab inside the Daily command centre artifact (above). This standalone widget remains available for sessions where {user_first_name} wants a focused task view without the full Cowork dashboard.
 
 After producing the text brief, render an interactive task board using `mcp__visualize__show_widget` (call `mcp__visualize__read_me` with module `interactive` first if not already loaded this session).
 
