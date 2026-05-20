@@ -41,22 +41,35 @@ If the user names an account but hasn't uploaded transcripts, **ask them to down
 
 Before doing anything else, run these checks in order. Don't proceed past a failed check - surface the gap to the user and wait.
 
-**1a. Confirm the Salesforce Prod connector is enabled.**
+**1a. Confirm the required connectors are enabled.**
 
-The brief reconciles transcripts against the live opportunity in Salesforce and writes housekeeping items against the real custom field names. Without SFDC the output is degraded (no housekeeping section, no contradiction-check between transcript evidence and what's in the CRM).
+This skill needs two MCP connectors live in the session before it can produce a full brief:
 
-Detect the SFDC tool at runtime: scan available MCP tools for one whose name contains `soqlQuery` (for example `mcp__claude_ai_Salesforce_Prod__soqlQuery`). This is the same runtime-detection pattern used by `avp-pipeline-review` and `regenerate-pipeline`. Probe by calling a cheap query against `Account` (or the matching `getUserInfo` if exposed) and watch for auth / connection errors. If the connector is reachable, continue to 1b. If it isn't, stop and give the user this instruction:
+- **Salesforce Prod** - the brief reconciles transcripts against the live opportunity and writes housekeeping items against real custom field names. Without SFDC the output is degraded (no housekeeping section, no contradiction-check between transcript evidence and what's in the CRM).
+- **Pendo** - exposes product-usage context (adoption, feature usage, account health) that informs the *Why Pendo & trap-setting* section and surfaces signals the rep can use in the next call. Without Pendo the trap-setting section is theoretical rather than account-specific.
 
-> Before I can run the full analysis I need the **Salesforce Prod connector** enabled. To turn it on:
+Detect both at runtime by scanning available MCP tools:
+
+- **Salesforce**: look for a tool whose name contains `soqlQuery` (for example `mcp__claude_ai_Salesforce_Prod__soqlQuery`). This matches the runtime-detection pattern used by `avp-pipeline-review` and `regenerate-pipeline`. Probe by calling a cheap query against `Account` and watch for auth / connection errors.
+- **Pendo**: look for any tool whose name contains `Pendo` (for example `mcp__claude_ai_Pendo__*`). Probe by calling a low-cost authenticated tool; if the connector responds without an auth-required error, it is live.
+
+If both connectors are reachable, continue to 1b. If either is missing, stop and give the user this instruction (substituting in only the connector(s) that are actually missing):
+
+> Before I can run the full analysis I need the following connectors enabled in Cowork:
+>
+> - **Salesforce Prod** - sign in with your Pendo SFDC credentials.
+> - **Pendo** - sign in with your Pendo account.
+>
+> To enable each:
 >
 > 1. Open the Cowork connectors panel (sidebar → **Connectors** or the plug icon).
-> 2. Find **Salesforce Prod** in the list.
-> 3. Click **Connect** and sign in with your Pendo SFDC credentials.
+> 2. Find the connector in the list.
+> 3. Click **Connect** and complete the sign-in flow.
 > 4. Tell me when it's done and I'll continue.
 >
-> If you'd rather proceed without SFDC, say so - I'll work from transcripts only and skip the housekeeping section.
+> If you'd rather proceed without one or both, say so - I'll skip the sections that depend on the missing connector.
 
-Wait for either the connector to come online or the user's explicit OK to proceed in transcripts-only mode.
+Wait for the connector(s) to come online or for the user's explicit OK to proceed in degraded mode. Note which connectors were missing so the brief can flag the affected sections later.
 
 **1b. Confirm the account name.**
 
