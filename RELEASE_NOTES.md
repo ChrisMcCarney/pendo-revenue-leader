@@ -1,5 +1,9 @@
 # Release notes
 
+## 0.4.1
+
+No-op release to verify the Cowork marketplace update flow. No template, skill, or behaviour changes.
+
 ## 0.4.0
 
 Operating model enrichment landed across the templated reference set.
