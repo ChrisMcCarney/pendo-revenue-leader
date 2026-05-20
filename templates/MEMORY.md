@@ -94,12 +94,27 @@ Cross-account projects: `04_Projects/`. Account-bound projects: `04_Accounts/Act
 
 | Term | Meaning |
 | --- | --- |
-| **CE** | Customer Engineer |
-| **AD** | Account Director |
-| **CSM** | Customer Success Manager |
+| **CE** | Customer Engineer (FY27 commercial full-lifecycle role; consolidates SE + CSM + TAM + Onboarding) |
+| **SE** | Sales Engineer (enterprise pre-sales) |
+| **AD** | Account Director (hybrid: book + new logo) |
+| **AE** | Account Executive (commercial/MM new business) |
+| **EAD** | Enterprise Account Director (legacy title, converging into AD) |
+| **RS** | Sr. Renewals Specialist (FY26 renewal-focused role, separate quota from AD) |
+| **CSM** | Customer Success Manager (enterprise; commercial folded into CE from May 1 2026) |
+| **FLM** | Front-Line Manager (inspects Stage 1 exit) |
+| **RVP** | Regional Vice President (segment x region) |
 | **CEP** | Customer Engagement Process, stages 0-6 |
-| **MEDDPICC** | Metrics, Economic Buyer, Decision Criteria, Decision Process, Identify Pain, Champion, Competition, Compelling event |
-| **CoM** | Command of the Message |
+| **MEDDPICC** | Metrics, Economic Buyer, Decision Criteria, Decision Process, Paper Process, Implicate Pain, Champion, Competition |
+| **COTM** | Command of the Message |
+| **PBO** | Positive Business Outcome (EB-language value; the R in ROI) |
+| **NC** | Negative Consequences (cost of inaction) |
+| **RBO** | Required Business Outcome (what champion and EB align on) |
+| **BVA** | Business Value Assessment (built jointly with champion) |
+| **JVP** | Joint Value Plan |
+| **MAP** | Mutual Action Plan |
+| **IKT** | Internal Knowledge Transfer (Stage 5 key activity) |
+| **CRE** | Customer Risk Event (post-sale) |
+| **WWNTBT** | What We Need To Believe Together (late-stage champion conversation) |
 | **Pank Pillars** | Pendo's company values |
 | **Pendo OS** | This workspace |
 | {your pillar 1 acronym} | {pillar_1_name} |

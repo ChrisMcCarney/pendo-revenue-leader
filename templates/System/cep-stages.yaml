@@ -1,78 +1,93 @@
 # Customer Engagement Process (CEP) Stage Definitions
 # Pendo's shared GTM process: stages 0-6, prospect to renewal.
+# Three-phase frame: Pipeline Generation (0), Visible Opportunity (1-4), Value Realisation (5-6).
 
 stages:
   - id: 0
-    name: "Identify"
-    summary: "Prospect identified. Account research, ICP fit assessment."
+    name: "Pipeline Generation"
+    customer_state: "Open to further conversations"
+    summary: "Pre-pipeline. Account identified, no qualified opportunity yet. Deliver Pendo Overview."
+    key_activity: "Deliver Pendo Overview"
     gates:
-      - "Account researched"
-      - "ICP fit confirmed"
-      - "Initial outreach planned"
-    typical_duration_days: 7
-
-  - id: 1
-    name: "Engage"
-    summary: "First conversations. Discovery, qualification, MEDDPICC begins."
-    gates:
-      - "Discovery call held"
-      - "Pain identified"
+      - "Pendo Overview delivered"
+      - "Potential pain identified"
       - "Champion candidate emerging"
-      - "MEDDPICC initiated"
+      - "Next steps agreed"
     typical_duration_days: 14
 
-  - id: 2
-    name: "Evaluate"
-    summary: "Technical evaluation. Demo, reverse demo, POC, snippet, integration check."
+  - id: 1
+    name: "Qualify"
+    customer_state: "Open to change and sharing info"
+    summary: "Qualification through 1:1 with champion. Tests power and influence, vested interest, and next steps."
+    key_activity: "1:1 call with champion"
     gates:
-      - "Demo delivered"
-      - "Technical fit confirmed"
-      - "Snippet deployed (or equivalent)"
-      - "Decision criteria defined"
+      - "FLM inspection completed"
+      - "Pain confirmed"
+      - "Champion confirmed"
+      - "Next steps documented"
+    typical_duration_days: 30  # should not exceed 30 days
+
+  - id: 2
+    name: "Evaluation"
+    customer_state: "Tells us problems and impacts"
+    summary: "Evaluation kickoff. EB identified, decision criteria documented."
+    key_activity: "Evaluation kickoff"
+    gates:
+      - "EB identified and intro requested"
+      - "Decision criteria documented"
+      - "Mutual Action Plan (MAP) agreed"
     typical_duration_days: 30
 
   - id: 3
     name: "Business Case"
-    summary: "Value framing, ROI, business case, executive alignment."
+    customer_state: "Tells us benefits of our solution"
+    summary: "Business Value Assessment (BVA) built. EB met. Value summary documented."
+    key_activity: "Build BVA (Business Value Assessment)"
     gates:
-      - "Metrics quantified"
-      - "Economic Buyer engaged"
-      - "Business case delivered"
-      - "ROI agreed"
+      - "Documented Value Summary"
+      - "Met with the EB"
+      - "Initial pricing delivered"
+      - "Procurement and legal kickoff"
     typical_duration_days: 21
 
   - id: 4
-    name: "Technical Win"
-    summary: "Technical decision criteria validated. Champion confirmed. Procurement begins."
+    name: "Negotiation"
+    customer_state: "Provides access to procurement and legal"
+    summary: "BVA playback and negotiation. Commercials negotiated. Legal and procurement engaged."
+    key_activity: "BVA playback and negotiation"
     gates:
-      - "All technical criteria met"
-      - "Champion confirmed multi-thread"
-      - "Security review initiated"
-      - "Compelling event identified"
+      - "Final pricing agreed"
+      - "Legal and procurement engaged"
+      - "Contract signed"
     typical_duration_days: 14
 
   - id: 5
-    name: "Commercial Close"
-    summary: "Pricing, contracts, signature."
+    name: "Ready to purchase"
+    customer_state: "Ready to move forward and purchase Pendo"
+    summary: "Internal Knowledge Transfer (IKT) and Joint Value Plan (JVP) review."
+    key_activity: "IKT and review JVP"
     gates:
-      - "Pricing agreed"
-      - "MSA / order form in legal"
-      - "Signature path confirmed"
-    typical_duration_days: 14
+      - "Deal Desk approved"
+      - "Announcement posted"
+    typical_duration_days: 7
 
   - id: 6
-    name: "Implementation & Success"
-    summary: "Onboarding, adoption, expansion, renewal. CE remains involved."
+    name: "Value realisation"
+    customer_state: "Actively using Pendo and sharing successes"
+    summary: "Customer actively uses Pendo. QBR or EBR on value realisation against JVP. Returns to Stage 0 for the next expansion."
+    key_activity: "QBR or EBR on value realisation vs JVP"
     gates:
-      - "Implementation kickoff held"
-      - "Initial use cases live"
-      - "Adoption metrics tracking"
-      - "Renewal owner identified"
+      - "Implementation completed"
+      - "Value realised vs JVP"
+      - "Expansion identified"
     typical_duration_days: 365  # ongoing
 
 # Stage transition rules
 transition_rules:
   forward: "All gates of the current stage must be met"
   backward: "Allowed any time; flag the reason in workstation MEMORY.md"
-  closed_lost: "Allowed from any stage; capture loss reason in workstation MEMORY.md"
-  closed_won: "Only from stage 5 forward to stage 6"
+  closed_won: "SFDC StageName outcome on signed contract (Stage 4 exit). Not a CEP stage."
+  closed_lost: "SFDC StageName outcome. Allowed from any stage; capture loss reason in workstation MEMORY.md."
+
+# Note: Closed Won and Closed Lost are SFDC StageName outcomes, not CEP stages.
+# The CEP continues post-sale through Stage 6 (value realisation), returning to Stage 0 for the next expansion.
