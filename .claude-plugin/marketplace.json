@@ -9,7 +9,7 @@
     {
       "name": "pendo-revenue-leader",
       "description": "Revenue leader operating system for Pendo RVPs and managers.",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "source": "./",
       "author": {
         "name": "Chris McCarney",

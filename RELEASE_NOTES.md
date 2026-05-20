@@ -1,5 +1,15 @@
 # Release notes
 
+## 0.4.0
+
+Operating model enrichment landed across the templated reference set.
+
+- `templates/00_Resources/operating-model.md` rewritten with nine sections sourced from the official Pendo CEP, COTM Day 1, and COTM Day 2 decks. Adds the FY27 CE role, hybrid AD, RS, sales leadership tiers; corrects CEP stages 5 and 6 to the post-sale value journey (Ready to purchase, Value realisation); adds MEDDPICC "know or assume" discipline and per-letter pressure tests; introduces the MEDDPICC-to-COTM bridge; new Champion and Economic Buyer sections; full COTM frame with eleven-element glossary, Mantra ritual, trap-setting, Pitch vs COTM, Tell / Show / Tell.
+- `templates/00_Resources/positioning.md` added. 5-lead context layer thesis, earned-right narrative, five-verb model (Observe / Understand / Act / Prove / Optimise), CIO pitch, CPO pitch, expansion thesis. Split from operating-model so deal mechanics and product positioning stay distinct.
+- `templates/System/cep-stages.yaml` rewritten with customer-state framing. Stage 5 = Ready to purchase, Stage 6 = Value realisation. Closed Won and Closed Lost reclassified as SFDC `StageName` outcomes rather than CEP stages.
+- `templates/MEMORY.md` common-terms table fixes the MEDDPICC decode (was missing Paper Process, treated Compelling Event as a separate letter). Adds lifecycle acronyms (PBO, NC, RBO, BVA, JVP, MAP, IKT, CRE, WWNTBT) and role acronyms (SE, AE, EAD, RS, FLM, RVP).
+- `skills/cotm-deal-analysis/SKILL.md` step 1a expanded to require both Salesforce Prod and Pendo MCP connectors. Without Pendo MCP the "Why Pendo & trap-setting" section is theoretical rather than account-specific; the skill now probes both, surfaces only the missing one(s), and tags the brief sections that were degraded.
+
 ## 0.1.0 (initial release)
 
 The first shareable version of the Pendo Revenue Leader plugin, derived from a personal RVP operating system and templatised for any Pendo revenue leader.
