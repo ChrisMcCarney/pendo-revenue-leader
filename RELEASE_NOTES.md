@@ -1,5 +1,15 @@
 # Release notes
 
+## 0.5.0
+
+`/update` skill lands. Existing users can pull in new reference docs, system schemas, and folder structure without re-running `/setup` or losing local content.
+
+- `skills/update/SKILL.md` added. State machine mirrors `/setup`: precheck, diff, plan, confirm, backup, apply, verify, report. Default conflict policy is auto-replace with backup; user-owned files (`MEMORY.md`, `team.yaml`, `pillars.yaml`, `user-profile.yaml`, account workstations, person pages) are never touched. Plain-English confirm prompt, warm failure copy, dry-run mode, prompt-per-change mode, crash recovery via `.update-in-progress.yaml`.
+- `placeholder-map.yaml` gains Section 11 (`update_categories`). Every plugin-managed file is explicitly classified as `managed_reference`, `system_schema`, `templated`, `user_owned_seed`, or `optional_scaffolding`. Files absent from the section are out of scope and never touched by `/update`.
+- `skills/setup/SKILL.md` S8 now writes `installed_plugin_version` into `.setup-state.yaml` alongside `plugin_version_hash`. `/update` reads this to name the from-version in its summary.
+- `_update_backups/{ISO}/` directory at the workstation root holds the prior version of every file `/update` overwrites. Discoverable (no dot prefix) so users can recover from Cowork's file tree.
+- `RELEASE_NOTES.md` is read at U2 of every `/update` run; entries between the user's installed version and the current plugin version are surfaced in the confirm prompt so users see what they are about to pull in.
+
 ## 0.4.1
 
 No-op release to verify the Cowork marketplace update flow. No template, skill, or behaviour changes.

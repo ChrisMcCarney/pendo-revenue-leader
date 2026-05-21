@@ -292,3 +292,91 @@ skill_runtime_lookups:
       - regenerate-pipeline
       - week-plan
       - week-review
+
+# -----------------------------------------------------------------------------
+# Section 11. /update reconciliation categories.
+# -----------------------------------------------------------------------------
+#
+# Read by the /update skill. Every file the plugin wants to keep in sync with
+# the user's workstation must appear here with an explicit category. Files
+# absent from this section are never touched by /update.
+#
+# Categories:
+#   managed_reference     Plugin owns the content. On hash mismatch with the
+#                         live file, replace and back up the live copy.
+#   system_schema         Same as managed_reference, plus a parse check after
+#                         write (YAML must still load). cep-stages.yaml etc.
+#   templated             Identity-token file. /update re-renders it via the
+#                         setup substitution engine using captured.identity
+#                         from .setup-state.yaml, then applies the
+#                         managed_reference rules to the rendered output.
+#   user_owned_seed       Create only if missing. Never overwrite under any
+#                         circumstance. team.yaml, pillars.yaml, MEMORY.md.
+#                         Cross-version edits to these files surface in
+#                         /update's release-note preview as copy-paste blocks.
+#   optional_scaffolding  Empty directory the plugin expects to exist. mkdir
+#                         with optional .gitkeep. Never remove if present.
+#
+# `since:` records the plugin version that introduced the file. Optional but
+# helpful for the /update summary copy. Skip when the file shipped at 0.1.0.
+
+update_categories:
+  defaults:
+    conflict_policy: auto_replace_with_backup
+    backup_dir: "_update_backups/{iso}"
+
+  files:
+    # Managed reference docs. Plugin is the source of truth.
+    "00_Resources/operating-model.md":     { category: managed_reference }
+    "00_Resources/positioning.md":         { category: managed_reference, since: "0.4.0" }
+    "00_Resources/pendo-values.md":        { category: managed_reference }
+    "00_Resources/communication-profile.md": { category: managed_reference }
+    "00_Resources/connectors.md":          { category: managed_reference }
+    "00_Resources/voice-principles.md":    { category: managed_reference }
+    "00_Resources/salesforce-fields.md":   { category: managed_reference }
+
+    # YAML configs that skills depend on. Replace with parse check.
+    "System/cep-stages.yaml":
+      category: system_schema
+      parse_check: yaml
+      affects_skills: [avp-pipeline-review, regenerate-pipeline, cotm-deal-analysis]
+    "System/Backlog.md":
+      category: managed_reference
+
+    # Identity-token files. Re-render via setup's substitution engine.
+    "CLAUDE.md":               { category: templated }
+    "GETTING_STARTED.md":      { category: templated }
+    "README.md":               { category: templated }
+
+    # Static templates the user copies from. Plugin owns the canonical version.
+    "Templates/Company_Template.md":  { category: managed_reference }
+    "Templates/Meeting_Template.md":  { category: managed_reference }
+    "Templates/Person_Template.md":   { category: managed_reference }
+    "Templates/Project_Template.md":  { category: managed_reference }
+    "Templates/Rep_Template.md":      { category: managed_reference }
+    "06_Functions/_TEMPLATE/CLAUDE.md": { category: managed_reference }
+    "06_Functions/_TEMPLATE/MEMORY.md": { category: managed_reference }
+    "06_Functions/README.md":         { category: managed_reference }
+
+    # User-owned seeds. Create if missing, never overwrite.
+    "MEMORY.md":                   { category: user_owned_seed }
+    "System/user-profile.yaml":    { category: user_owned_seed, seed_from: "System/user-profile.example.yaml" }
+    "System/team.yaml":            { category: user_owned_seed, seed_from: "System/team.example.yaml" }
+    "System/pillars.yaml":         { category: user_owned_seed, seed_from: "System/pillars.example.yaml" }
+
+  dirs:
+    "00_Resources/competitive-intel": { category: optional_scaffolding, gitkeep: false }
+    "00_Resources/brand":             { category: optional_scaffolding, gitkeep: false }
+    "01_Inbox/Daily_Plans":           { category: optional_scaffolding, gitkeep: true }
+    "01_Inbox/Weekly":                { category: optional_scaffolding, gitkeep: true }
+    "03_Goals":                       { category: optional_scaffolding, gitkeep: true }
+    "04_Accounts/Active":             { category: optional_scaffolding, gitkeep: true }
+    "04_Accounts/Inactive":           { category: optional_scaffolding, gitkeep: true }
+    "04_Accounts/Archived":           { category: optional_scaffolding, gitkeep: true }
+    "04_Projects":                    { category: optional_scaffolding, gitkeep: true }
+    "05_People/Internal":             { category: optional_scaffolding, gitkeep: true }
+    "05_People/External":             { category: optional_scaffolding, gitkeep: true }
+    "07_Career":                      { category: optional_scaffolding, gitkeep: true }
+    "08_Pipeline/snapshots":          { category: optional_scaffolding, gitkeep: true }
+    "08_Pipeline/changes":            { category: optional_scaffolding, gitkeep: true }
+    "09_Archives":                    { category: optional_scaffolding, gitkeep: true }

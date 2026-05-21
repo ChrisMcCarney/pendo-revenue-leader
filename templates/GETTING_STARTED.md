@@ -86,6 +86,12 @@ Install via Cowork's connector menu (one-time):
 
 ---
 
+## Keeping your workstation up to date
+
+When Cowork installs a new version of the plugin, run `/update` to pull in any new reference docs, system schemas, or folder additions. Your `MEMORY.md`, `team.yaml`, `pillars.yaml`, account folders, and person pages are never touched. Anything overwritten lands in `_update_backups/{ISO}/` at your project root so you can recover prior versions.
+
+---
+
 ## File structure reference
 
 ```

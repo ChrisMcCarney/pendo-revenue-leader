@@ -27,7 +27,7 @@ By the time you sit down with your manager for your forecast call, you have a de
 
 ## What you get when you install
 
-Thirteen skills, each scoped tightly.
+Fourteen skills, each scoped tightly.
 
 ### Planning and reflection
 
@@ -55,6 +55,10 @@ Thirteen skills, each scoped tightly.
 ### Brand and design
 
 - `/pendo-design`. The Pendo FY27 Brand Design System bundled inside the plugin. `BRAND.md` spec, `colors_and_type.css` tokens, Sora and Inter variable font files, every logo and chevron asset, marketing and slides UI kits, preview cards for every component. Invoke it directly to brief Cowork on the brand, or let the asset-producing skills read it as a dependency.
+
+### Maintenance
+
+- `/update`. Reconciles your workstation with the current plugin version. Cowork auto-refreshes the skills themselves, but reference docs, system schemas, and folder scaffolding under `templates/` were copied one-way at install and need this skill to stay current. Backs up everything it changes. Leaves your MEMORY.md, account folders, person pages, team.yaml, and pillars.yaml untouched.
 
 ## How it works under the bonnet
 
@@ -154,7 +158,17 @@ Optional:
 
 ## Update workflow
 
-When a new commit lands on `main`, Cowork pulls it automatically. No action needed.
+Cowork pulls new versions of the plugin automatically when commits land on `main`. The skills themselves refresh in place. The reference docs, system schemas, and folder structure under `templates/` are a different story: they were copied into your project once by `/setup` and need an explicit refresh to pull in changes.
+
+Run:
+
+```
+/update
+```
+
+`/update` compares the current plugin's `templates/` tree against your workstation, lists exactly what will change in plain English, and asks before touching anything. It always backs up the prior version of every file it overwrites to `_update_backups/{ISO}/` at your project root. Your `MEMORY.md`, `team.yaml`, `pillars.yaml`, account folders, and person pages are never touched.
+
+If nothing has changed since you last updated, the skill exits cleanly with `Already on v{X}. Nothing to do.`
 
 If you want to contribute changes:
 

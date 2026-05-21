@@ -93,6 +93,7 @@ On recovery, control returns to the originating state at the same sub-step.
 ```yaml
 schema_version: 1
 plugin_version_hash: "<sha1 of plugin.json contents at run start>"
+installed_plugin_version: "<semver from plugin.json, e.g. 0.5.0>"
 created_at: "<ISO 8601 local time>"
 updated_at: "<ISO 8601 local time>"
 project_path: "<absolute path the user picked>"
@@ -384,7 +385,7 @@ Tell the user verbatim: `No deals owned by your direct reports. Pulling deals ow
 
 5. Surface a per-connector status line: `Connectors:` followed by one bullet per connector with the status from S0 precheck (re-pinged here). For each `failed` or `skipped` connector, name which skills will be affected (Calendar -> /daily-plan, /meeting-prep, /week-plan, /week-review; Gmail -> /daily-plan, /week-review; Granola -> /process-meetings). User can ignore now and connect later when they invoke a dependent skill.
 
-6. Set `current_step: complete`, `last_completed_step: sanity`. Update `updated_at`.
+6. Set `current_step: complete`, `last_completed_step: sanity`. Update `updated_at`. Write `installed_plugin_version` from the current `plugin.json` `version` field. This is what `/update` reads later to name the from-version in its summary copy.
 
 7. Close with one of two lines depending on local time:
    - If today is a weekday before 4pm in `{user_timezone}`: `You are set up. Run /daily-plan now to see today's brief, or tomorrow morning as your regular rhythm.`
