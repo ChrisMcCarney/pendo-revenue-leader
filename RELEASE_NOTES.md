@@ -1,5 +1,13 @@
 # Release notes
 
+## 0.6.0
+
+New skill: `/account-health-plus`. A unified pre-call, renewal-prep, or QBR brief for any Pendo customer. Fuses live SFDC entitlements with live Pendo product usage to produce a single markdown document covering engagement, feature usage, NPS, feedback, CRE, normalised FY25 module entitlements (with legacy-to-FY25 crosswalk), per-module adoption grading, evidence-backed upsell plays, renewal status with EB and MEDDPICC red flags, top stakeholders, and discussion topics.
+
+- `skills/account-health-plus/SKILL.md` added. Output saves to `04_Accounts/Active/{Name}/Notes/{YYYY-MM-DD}-account-health.md` and auto-creates the workstation folder from `04_Accounts/Active/_TEMPLATE/` if it doesn't exist.
+- Requires the Salesforce connector, Pendo MCP access to at least one of the account's customer subscriptions, and a workstation-local `00_Resources/pricing-packaging-mapping.md` (the legacy-to-FY25 packaging crosswalk; not shipped with the plugin because it contains proprietary Pendo packaging detail). The skill fails fast with a warm message if any of these are missing.
+- Triggers on `/account-health-plus`, "deep health on {name}", "full account brief for {name}", "renewal prep for {name}", "QBR prep for {name}", and casual phrasings like "what's going on with {account}" when context implies a customer.
+
 ## 0.5.1
 
 Locks down `CLAUDE.md` and pairs it with a user-owned `CLAUDE_USER.md` companion. Adds a `SessionStart` hook that auto-invokes `/update` when the plugin has new content. Fixes two outright misclassifications from v0.5.0 where files that should be user-owned were being treated as plugin-managed.

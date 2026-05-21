@@ -27,7 +27,7 @@ By the time you sit down with your manager for your forecast call, you have a de
 
 ## What you get when you install
 
-Fourteen skills, each scoped tightly.
+Fifteen skills, each scoped tightly.
 
 ### Planning and reflection
 
@@ -51,6 +51,7 @@ Fourteen skills, each scoped tightly.
 
 - `/company-research`. Fully automated prospect research. Pendo-branded HTML deck saved into the active workstation's `Resources/` folder. Maps every finding to a specific Pendo use case.
 - `/strategy-map-research`. Ten-step research workflow for Strategic Alignment Value Strategy Maps. Mission statements, strategic priorities, key initiatives, business outcomes, value drivers, with Pendo product alignments. HTML output, brand-compliant.
+- `/account-health-plus`. Unified Account Health + Entitlements brief for any Pendo customer. Fuses live SFDC and Pendo MCP data: engagement, NPS, feedback, CRE, normalised FY25 module entitlements with legacy-to-FY25 crosswalk, per-module adoption grading, evidence-backed upsell plays, renewal status with EB and MEDDPICC red flags, top stakeholders, and discussion topics. Saves to `04_Accounts/Active/{Name}/Notes/`. Requires `00_Resources/pricing-packaging-mapping.md` in the workstation.
 
 ### Brand and design
 
