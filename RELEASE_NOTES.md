@@ -1,5 +1,19 @@
 # Release notes
 
+## 0.6.1
+
+Patch for `/account-health-plus`: fix the two-tier Pendo data model so the skill actually runs for Pendo employees instead of fail-fasting on customer-sub access.
+
+- The 0.6.0 skill assumed Pendo employees had admin scope on the customer-owned Pendo subscription (where end users live). In practice they almost never do, so the original fail-fast at Step 4 killed the brief on most accounts. The skill now anchors its primary usage view on **pendo-internal** (subId `5668600916475904`), where each Pendo customer appears as an account whose visitors are the customer's employees administering Pendo. Pendo sellers, SEs, and CS almost always have access to pendo-internal.
+- Step 4 rewritten with two clearly labelled paths: PRIMARY (`accountQuery` + `visitorQuery` + `activityQuery` against pendo-internal for employee usage, top features, top pages, top visitors) and SECONDARY (only when accessible: original deep queries against customer-owned subs for end-user guide views, NPS, feedback, session replay).
+- New fail-fast: only stop if neither plane is accessible (no pendo-internal match AND no accessible customer-owned subs). The old "no customer-sub access" fail-fast is gone.
+- Report Section 1 split into "Admin-side activity (customer's employees using Pendo)" and "End-user activity (customer's product, synced into pendo-internal)" plus an optional deep-dive subsection when customer-owned sub access exists.
+- Report Section 2 reframed as "Pendo modules employees actually use" with the top 15 features grouped by Analytics / Guides / Settings / Nav. Surfaces the data-analyst headline explicitly (canonical Mixpanel-vs-Pendo signal).
+- Section 4 adoption-grading rubric in Step 6 now defaults to a feature-usage-based grade (employee top-features list) with the old MAU-based rubric retained as a fallback when customer-owned sub access exists. When both signals disagree, the report names the disagreement and leans on feature-usage.
+- New "Common edge cases" entries for (a) account not in pendo-internal but customer-owned sub accessible, (b) customer with multiple Pendo account IDs in pendo-internal.
+
+Entitlement crosswalk, CRE pull, opportunity/EB pull, MEDDPICC red flags, and the report writing rules are unchanged.
+
 ## 0.6.0
 
 New skill: `/account-health-plus`. A unified pre-call, renewal-prep, or QBR brief for any Pendo customer. Fuses live SFDC entitlements with live Pendo product usage to produce a single markdown document covering engagement, feature usage, NPS, feedback, CRE, normalised FY25 module entitlements (with legacy-to-FY25 crosswalk), per-module adoption grading, evidence-backed upsell plays, renewal status with EB and MEDDPICC red flags, top stakeholders, and discussion topics.
