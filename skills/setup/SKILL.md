@@ -386,17 +386,7 @@ Tell the user verbatim: `No deals owned by your direct reports. Pulling deals ow
 
 5. Surface a per-connector status line: `Connectors:` followed by one bullet per connector with the status from S0 precheck (re-pinged here). For each `failed` or `skipped` connector, name which skills will be affected (Calendar -> /daily-plan, /meeting-prep, /week-plan, /week-review; Gmail -> /daily-plan, /week-review; Granola -> /process-meetings). User can ignore now and connect later when they invoke a dependent skill.
 
-5b. Offer the SessionStart auto-update hook. `AskUserQuestion`: `Auto-detect plugin updates? When the Pendo plugin gets a new version, a quick check at session start can invoke /update for you. Most sessions see no prompt at all (the check is silent when nothing has changed). Recommended.` Options: `Yes, register the hook` / `No, I'll run /update manually` / `Skip for now`.
-
-On `Yes, register the hook`:
-- Resolve the absolute path to `<plugin_root>/hooks/check-update.sh`.
-- Read `.claude/settings.json` at the workstation root if it exists; otherwise start from `{}`.
-- Append (or create) the SessionStart hook entry pointing to `bash <absolute hook path>`. Preserve any pre-existing hooks under `SessionStart` or any other event verbatim. If an entry with the same command already exists, leave it as-is rather than duplicating.
-- Write the merged JSON back to `.claude/settings.json`, pretty-printed with two-space indent.
-- Record `captured.hook.registered_at` and `captured.hook.path` in `.setup-state.yaml`.
-- Print: `SessionStart hook registered at {absolute_path}/.claude/settings.json. Quiet by default; only fires when the plugin has new content.`
-
-On `No, I'll run /update manually` or `Skip for now`: do not modify `.claude/settings.json`. Print: `OK. Run /update manually after each plugin release. You can register the hook later by re-running /setup with the Update one section option, or by running /update which will offer to register it if missing.`
+5b. Note the SessionStart hook. The plugin declares a SessionStart hook in `.claude-plugin/hooks.json` that Cowork auto-installs whenever the plugin is enabled. It silently checks the workstation's recorded `plugin_version_hash` against the plugin's current `plugin.json` hash at every session start; on mismatch it invokes `/update`. No user action is required — surface a status line only: `SessionStart hook: managed by the plugin (Cowork). Quiet by default; only fires when the plugin has new content.`
 
 6. Set `current_step: complete`, `last_completed_step: sanity`. Update `updated_at`. Write `installed_plugin_version` from the current `plugin.json` `version` field. This is what `/update` reads later to name the from-version in its summary copy.
 

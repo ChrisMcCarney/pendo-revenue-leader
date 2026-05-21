@@ -333,8 +333,7 @@ this update finishes. You only do this once.
    b. If `H_live_now` differs from `H_live` recorded at U1, the user edited the file between U1 and now. Refresh the backup: copy the current live file over `_update_backups/{ISO}/<path>` so the user can recover whatever they had at the moment of overwrite.
    c. Write the plugin's content (rendered if `templated`).
 4. For each entry in `actions.seeded` (in lexical path order): re-check existence. If the file now exists, SKIP (a race created it between U1 and now). Otherwise copy from `seed_from` (or `templates/<path>` if no `seed_from`).
-5. **SessionStart hook registration.** After all file writes succeed, check `.claude/settings.json` at the workstation root. If a `SessionStart` hook entry pointing to `<plugin_root>/hooks/check-update.sh` is not present, prompt the user once: `Auto-detect future plugin updates? When a new plugin version lands, a quick check at session start can invoke /update for you. Most sessions stay silent. Recommended.` Options: `Yes, register` / `No, skip`. On `Yes`, merge the entry into `.claude/settings.json` using the same logic as `/setup` S5b (preserve any pre-existing hooks; do not duplicate; pretty-print two-space indent). If the entry already exists, do nothing (no prompt). This sub-step is silent on a fresh workstation that was set up via `/setup` (which already registered the hook); it only fires on existing workstations migrating to v0.5.1+.
-6. If U3 chose `Prompt before each change`: gate each of the above writes behind a per-file `AskUserQuestion` `Apply: {action} {path}?` with options `Apply` / `Skip this file` / `Cancel update`. On `Cancel update`, halt at the current file and proceed to U7 reporting what was done so far.
+5. If U3 chose `Prompt before each change`: gate each of the above writes behind a per-file `AskUserQuestion` `Apply: {action} {path}?` with options `Apply` / `Skip this file` / `Cancel update`. On `Cancel update`, halt at the current file and proceed to U7 reporting what was done so far.
 
 **Failure modes:**
 
@@ -456,15 +455,9 @@ This pattern can extend to other files (`README.md` paired with `README_USER.md`
 
 ### Settings hook
 
-`/update` registers (or detects already-registered) a `SessionStart` hook in `.claude/settings.json` at the workstation root. The hook calls `<plugin_root>/hooks/check-update.sh`, which compares the workstation's stored `plugin_version_hash` against the current plugin's `plugin.json` hash and emits `additionalContext` only on mismatch. Most session starts are silent (no output, no `/update` invocation).
+The SessionStart hook is declared in the plugin manifest at `.claude-plugin/hooks.json` and auto-installs whenever Cowork enables the plugin. There is no per-workstation `.claude/settings.json` write step. The hook calls `${CLAUDE_PLUGIN_ROOT}/hooks/check-update.sh`, which compares the workstation's stored `plugin_version_hash` against the current plugin's `plugin.json` hash and emits `additionalContext` only on mismatch. Most session starts are silent (no output, no `/update` invocation).
 
-`/update` writes the hook entry in U5 only when:
-- `.claude/settings.json` does not contain a SessionStart hook with the same `command` already.
-- The user accepts the one-time prompt to register it.
-
-`/update` never removes a hook entry. If the user wants to disable auto-detection, they edit `.claude/settings.json` themselves.
-
-If `.claude/settings.json` is malformed JSON, U5 surfaces a warning (`Couldn't merge the SessionStart hook: your .claude/settings.json doesn't parse as JSON. Fix it or delete it and re-run /update.`) and skips the hook write. File writes already completed at U5 are not rolled back; the hook is independent.
+If a user wants to disable the hook, they disable the plugin in Cowork's Customize panel; there is no per-workstation override. Workstations that were migrated from v0.5.1 / v0.6.0 / v0.6.1 may carry a redundant `.claude/settings.json` SessionStart entry from the old design; that entry still works but is no longer required and can be removed by hand.
 
 ### Warm failure copy
 

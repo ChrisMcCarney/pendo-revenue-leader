@@ -177,7 +177,7 @@ Don't edit `CLAUDE.md` directly. `/update` replaces it on every plugin release. 
 
 ### Auto-update reminder (SessionStart hook)
 
-`/setup` and `/update` offer to register a small `SessionStart` hook in your workstation's `.claude/settings.json`. The hook does a quick version check at session start. If the plugin has new content, it asks Claude to run `/update` for you before responding. If nothing has changed, the hook stays completely silent. You can opt out (or remove it later by editing `.claude/settings.json`).
+The plugin declares a `SessionStart` hook in its own manifest (`.claude-plugin/hooks.json`). Cowork installs it automatically when the plugin is enabled — no per-workstation configuration needed. The hook does a quick version check at session start: if the plugin has new content, it asks Claude to invoke `/update` before responding; if nothing has changed, it stays completely silent. The hook is visible in Cowork's Customize panel alongside the plugin's Skills, and you can disable the whole plugin if you want to turn it off.
 
 If you want to contribute changes:
 

@@ -1,5 +1,19 @@
 # Release notes
 
+## 0.6.2
+
+Patch fix to the SessionStart hook delivery mechanism.
+
+- The 0.5.1 design wired the hook by having `/setup` and `/update` write a `SessionStart` entry into the workstation's `.claude/settings.json`. That meant the hook was invisible in Cowork's Customize panel (Cowork only surfaces what the plugin declares in its manifest), and it never activated for users until they ran `/update` at least once — which they couldn't be reminded to do because the hook wasn't yet installed. Classic chicken-and-egg.
+- New `.claude-plugin/hooks.json` declares the SessionStart hook at the plugin level. Cowork auto-installs it as soon as the plugin is enabled. The Customize panel surfaces it alongside Skills. No `/setup` or `/update` step required to wire it.
+- `.claude-plugin/hooks.json` uses `${CLAUDE_PLUGIN_ROOT}` to reference the bundled `hooks/check-update.sh` script portably; the path resolves at runtime to wherever Cowork installs the plugin.
+- `/setup` S5b simplified to a status line only (no longer prompts to register; Cowork handles it).
+- `/update` U5 hook-registration step removed (no longer prompts to register; Cowork handles it). The "Settings hook" cross-cutting subsection in `skills/update/SKILL.md` is rewritten to describe the new mechanism.
+- `README.md` "Auto-update reminder" section rewritten to reflect plugin-manifest install rather than opt-in registration.
+- `hooks/check-update.sh` itself is unchanged. The script's logic (walk up from CWD for `.setup-state.yaml`, hash-compare, emit `additionalContext` only on mismatch, silent otherwise) is identical to v0.5.1.
+
+**Migration story for workstations that were on v0.5.1-0.6.1 with manually-registered hooks:** the old `.claude/settings.json` entry still works (it points to the same `check-update.sh` script). You don't have to touch it. If you want to clean it up, delete the SessionStart block from `.claude/settings.json` after v0.6.2 lands; Cowork's plugin-managed hook covers the same ground.
+
 ## 0.6.1
 
 Patch for `/account-health-plus`: fix the two-tier Pendo data model so the skill actually runs for Pendo employees instead of fail-fasting on customer-sub access.
