@@ -1,7 +1,7 @@
 {
   "name": "pendo-revenue-leader",
   "description": "The revenue leader operating system for Pendo RVPs and managers. Run /setup once to scaffold your working project from live Salesforce and Slack, then use /daily-plan, /week-plan, /regenerate-pipeline, /avp-pipeline-review, /meeting-prep, /process-meetings and more to manage your team, pipeline, and forecast.",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "author": {
     "name": "Chris McCarney",
     "email": "chris.mccarney@pendo.io"

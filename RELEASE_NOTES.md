@@ -1,5 +1,32 @@
 # Release notes
 
+## 0.6.3
+
+Patch fix to the SessionStart hook manifest location and shape. v0.6.2 declared the hook at `.claude-plugin/hooks.json` with a top-level `{"SessionStart": [...]}` structure; Cowork didn't recognise either and the hook stayed invisible in the Customize panel.
+
+Corrected per the Claude Code plugin reference:
+
+- File moved to `hooks/hooks.json` (the plugin's `hooks/` directory, alongside `check-update.sh`).
+- JSON wrapped in `{"hooks": {...}}` per the documented schema:
+  ```json
+  {
+    "hooks": {
+      "SessionStart": [
+        {
+          "matcher": "",
+          "hooks": [
+            {"type": "command",
+             "command": "bash \"${CLAUDE_PLUGIN_ROOT}\"/hooks/check-update.sh"}
+          ]
+        }
+      ]
+    }
+  }
+  ```
+- `${CLAUDE_PLUGIN_ROOT}` is now quoted so paths with spaces resolve correctly.
+
+`hooks/check-update.sh` itself is unchanged.
+
 ## 0.6.2
 
 Patch fix to the SessionStart hook delivery mechanism.
