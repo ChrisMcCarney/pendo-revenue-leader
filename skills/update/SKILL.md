@@ -240,19 +240,39 @@ What is new since you installed:
  - v0.4.0: enriched operating model with MEDDPICC plus COTM plus CEP detail;
            added new positioning doc; rewrote CEP stages config
  - v0.5.0: this update flow
+ - v0.5.1: CLAUDE.md locked down (user customizations go in CLAUDE_USER.md);
+           voice-principles.md and Backlog.md reclassified as user-owned
 
 I will change {N_replace} files and add {N_create} new ones:
  - Refresh 00_Resources/operating-model.md
  - Refresh 00_Resources/communication-profile.md
  - Refresh System/cep-stages.yaml
- - Re-render CLAUDE.md with your current identity
+ - Re-render CLAUDE.md with your current identity (your previous CLAUDE.md
+   will be backed up so you can copy any custom edits into CLAUDE_USER.md)
  - Add 00_Resources/positioning.md (new in v0.4.0)
+ - Add CLAUDE_USER.md (your editable companion to CLAUDE.md, new in v0.5.1)
 
-What I will not touch: your MEMORY.md, account folders, person pages,
-team.yaml, pillars.yaml, anything under 01_Inbox/, 02_Tasks/, etc.
+What I will not touch: your MEMORY.md, CLAUDE_USER.md, voice-principles.md,
+Backlog.md, team.yaml, pillars.yaml, user-profile.yaml, account folders,
+person pages, anything under 01_Inbox/, 02_Tasks/, etc.
 
 Your current versions of the changed files will be saved to:
   {absolute_path}/_update_backups/{ISO}/
+```
+
+When `CLAUDE.md` is part of the REPLACE action list AND the user has no `CLAUDE_USER.md` yet (most common: existing v0.5.0 workstations on first /update to v0.5.1), surface a one-paragraph callout before the AskUserQuestion:
+
+```
+Heads-up about CLAUDE.md:
+
+Starting with v0.5.1, CLAUDE.md is locked down to plugin content so /update
+can keep it current. Your customizations belong in CLAUDE_USER.md, which
+will land alongside it as part of this update. Both files load at session
+start; on conflict, CLAUDE.md wins.
+
+If you have edits in your current CLAUDE.md you want to keep, they will be
+in the backup directory above. Copy them into the new CLAUDE_USER.md after
+this update finishes. You only do this once.
 ```
 
 **AskUserQuestion:** header `Update plan`, options:
@@ -313,7 +333,8 @@ Your current versions of the changed files will be saved to:
    b. If `H_live_now` differs from `H_live` recorded at U1, the user edited the file between U1 and now. Refresh the backup: copy the current live file over `_update_backups/{ISO}/<path>` so the user can recover whatever they had at the moment of overwrite.
    c. Write the plugin's content (rendered if `templated`).
 4. For each entry in `actions.seeded` (in lexical path order): re-check existence. If the file now exists, SKIP (a race created it between U1 and now). Otherwise copy from `seed_from` (or `templates/<path>` if no `seed_from`).
-5. If U3 chose `Prompt before each change`: gate each of the above writes behind a per-file `AskUserQuestion` `Apply: {action} {path}?` with options `Apply` / `Skip this file` / `Cancel update`. On `Cancel update`, halt at the current file and proceed to U7 reporting what was done so far.
+5. **SessionStart hook registration.** After all file writes succeed, check `.claude/settings.json` at the workstation root. If a `SessionStart` hook entry pointing to `<plugin_root>/hooks/check-update.sh` is not present, prompt the user once: `Auto-detect future plugin updates? When a new plugin version lands, a quick check at session start can invoke /update for you. Most sessions stay silent. Recommended.` Options: `Yes, register` / `No, skip`. On `Yes`, merge the entry into `.claude/settings.json` using the same logic as `/setup` S5b (preserve any pre-existing hooks; do not duplicate; pretty-print two-space indent). If the entry already exists, do nothing (no prompt). This sub-step is silent on a fresh workstation that was set up via `/setup` (which already registered the hook); it only fires on existing workstations migrating to v0.5.1+.
+6. If U3 chose `Prompt before each change`: gate each of the above writes behind a per-file `AskUserQuestion` `Apply: {action} {path}?` with options `Apply` / `Skip this file` / `Cancel update`. On `Cancel update`, halt at the current file and proceed to U7 reporting what was done so far.
 
 **Failure modes:**
 
@@ -364,9 +385,11 @@ Your current versions of the changed files will be saved to:
 
    Added:
     - 00_Resources/positioning.md
+    - CLAUDE_USER.md (your editable companion to CLAUDE.md)
 
    Untouched (yours):
-    - MEMORY.md, team.yaml, pillars.yaml, account folders, person pages.
+    - MEMORY.md, CLAUDE_USER.md (if it existed), voice-principles.md, Backlog.md,
+      team.yaml, pillars.yaml, user-profile.yaml, account folders, person pages.
 
    Backup of prior versions:
     - {absolute_path}/_update_backups/{ISO}/
@@ -377,6 +400,20 @@ Your current versions of the changed files will be saved to:
    ```
 
    Tailor the "what to try next" lines to the actual change set: pick one or two lines that map to the files that changed. If nothing notable, omit the section.
+
+   When CLAUDE.md was in the REPLACE action list AND `CLAUDE_USER.md` is in the CREATE list (the v0.5.1 migration case), append a dedicated callout after the main summary:
+
+   ```
+   One more thing about CLAUDE.md:
+
+   CLAUDE.md is now plugin-managed and will be replaced on every /update.
+   Your previous CLAUDE.md is at:
+     {absolute_path}/_update_backups/{ISO}/CLAUDE.md
+
+   Open it side-by-side with the new CLAUDE_USER.md and copy any custom rules,
+   references, or preferences across. CLAUDE_USER.md is yours; /update will
+   never touch it. You only need to do this once.
+   ```
 
 4. Return control to Cowork.
 
@@ -404,6 +441,30 @@ The plugin tree contains `templates/` for the post-setup user tree, plus a small
 2. Fall back to `<plugin_root>/<path>` if step 1 misses.
 
 Live paths are always `<project_root>/<path>`.
+
+### Companion files
+
+Some plugin-managed files are paired with a user-owned companion at the workstation root. The plugin file is `templated` (always replaced on update); the companion is `user_owned_seed` (created once, never touched again). Section 0 of the plugin file instructs the runtime to load both at session start, with the plugin file taking precedence on conflict.
+
+The pattern as of v0.5.1:
+
+| Plugin file | User companion | Conflict winner |
+|---|---|---|
+| `CLAUDE.md` | `CLAUDE_USER.md` | `CLAUDE.md` |
+
+This pattern can extend to other files (`README.md` paired with `README_USER.md`, `00_Resources/salesforce-fields.md` paired with `salesforce-fields_USER.md`) if real customization friction emerges. The mechanics are identical: add the companion to the manifest as `user_owned_seed`, ship a starter template, and add a precedence callout to the plugin file's Section 0 (or equivalent).
+
+### Settings hook
+
+`/update` registers (or detects already-registered) a `SessionStart` hook in `.claude/settings.json` at the workstation root. The hook calls `<plugin_root>/hooks/check-update.sh`, which compares the workstation's stored `plugin_version_hash` against the current plugin's `plugin.json` hash and emits `additionalContext` only on mismatch. Most session starts are silent (no output, no `/update` invocation).
+
+`/update` writes the hook entry in U5 only when:
+- `.claude/settings.json` does not contain a SessionStart hook with the same `command` already.
+- The user accepts the one-time prompt to register it.
+
+`/update` never removes a hook entry. If the user wants to disable auto-detection, they edit `.claude/settings.json` themselves.
+
+If `.claude/settings.json` is malformed JSON, U5 surfaces a warning (`Couldn't merge the SessionStart hook: your .claude/settings.json doesn't parse as JSON. Fix it or delete it and re-run /update.`) and skips the hook write. File writes already completed at U5 are not rolled back; the hook is independent.
 
 ### Warm failure copy
 

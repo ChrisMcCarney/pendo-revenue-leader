@@ -332,7 +332,6 @@ update_categories:
     "00_Resources/pendo-values.md":        { category: managed_reference }
     "00_Resources/communication-profile.md": { category: managed_reference }
     "00_Resources/connectors.md":          { category: managed_reference }
-    "00_Resources/voice-principles.md":    { category: managed_reference }
     "00_Resources/salesforce-fields.md":   { category: managed_reference }
 
     # YAML configs that skills depend on. Replace with parse check.
@@ -340,10 +339,9 @@ update_categories:
       category: system_schema
       parse_check: yaml
       affects_skills: [avp-pipeline-review, regenerate-pipeline, cotm-deal-analysis]
-    "System/Backlog.md":
-      category: managed_reference
 
     # Identity-token files. Re-render via setup's substitution engine.
+    # CLAUDE.md is locked down at v0.5.1; user customizations go in CLAUDE_USER.md.
     "CLAUDE.md":               { category: templated }
     "GETTING_STARTED.md":      { category: templated }
     "README.md":               { category: templated }
@@ -359,10 +357,16 @@ update_categories:
     "06_Functions/README.md":         { category: managed_reference }
 
     # User-owned seeds. Create if missing, never overwrite.
-    "MEMORY.md":                   { category: user_owned_seed }
-    "System/user-profile.yaml":    { category: user_owned_seed, seed_from: "System/user-profile.example.yaml" }
-    "System/team.yaml":            { category: user_owned_seed, seed_from: "System/team.example.yaml" }
-    "System/pillars.yaml":         { category: user_owned_seed, seed_from: "System/pillars.example.yaml" }
+    # voice-principles.md and Backlog.md moved here in v0.5.1 (were managed_reference
+    # in v0.5.0 — both are user capture zones, not plugin-owned reference content).
+    # CLAUDE_USER.md is the user companion to CLAUDE.md, introduced in v0.5.1.
+    "MEMORY.md":                          { category: user_owned_seed }
+    "CLAUDE_USER.md":                     { category: user_owned_seed, since: "0.5.1" }
+    "00_Resources/voice-principles.md":   { category: user_owned_seed }
+    "System/Backlog.md":                  { category: user_owned_seed }
+    "System/user-profile.yaml":           { category: user_owned_seed, seed_from: "System/user-profile.example.yaml" }
+    "System/team.yaml":                   { category: user_owned_seed, seed_from: "System/team.example.yaml" }
+    "System/pillars.yaml":                { category: user_owned_seed, seed_from: "System/pillars.example.yaml" }
 
   dirs:
     "00_Resources/competitive-intel": { category: optional_scaffolding, gitkeep: false }

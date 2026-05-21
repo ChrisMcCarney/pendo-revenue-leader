@@ -1,5 +1,21 @@
 # Release notes
 
+## 0.5.1
+
+Locks down `CLAUDE.md` and pairs it with a user-owned `CLAUDE_USER.md` companion. Adds a `SessionStart` hook that auto-invokes `/update` when the plugin has new content. Fixes two outright misclassifications from v0.5.0 where files that should be user-owned were being treated as plugin-managed.
+
+- `templates/CLAUDE.md` gains a Section 0 "User overrides" callout. The section tells the runtime (and the user) that `CLAUDE.md` is plugin-managed and replaced on every `/update`; user customizations belong in `CLAUDE_USER.md` at the workstation root; on conflict, `CLAUDE.md` wins.
+- New `templates/CLAUDE_USER.md` ships as a thin starter with named sections (Local references, Local skills, Local preferences, Local people / accounts / projects). Classified as `user_owned_seed` in `placeholder-map.yaml` Section 11: created once if missing, never overwritten.
+- Reclassified to `user_owned_seed`:
+  - `00_Resources/voice-principles.md` (the setup wizard's S6 explicitly described it as a starter template the user customizes; previous `managed_reference` classification was a bug).
+  - `System/Backlog.md` (a user capture zone, not plugin reference content).
+- New `hooks/check-update.sh` SessionStart hook. Walks up from CWD looking for `.setup-state.yaml`, compares the workstation's stored `plugin_version_hash` against the plugin's current `plugin.json` hash, and emits `additionalContext` instructing Claude to invoke `/update` only on mismatch. 99% of session starts are silent.
+- `/setup` S8 prompts to register the SessionStart hook in `.claude/settings.json` at the workstation root (opt-in, recommended).
+- `/update` U5 detects an unregistered hook on existing workstations and prompts once to add it. Pre-existing hooks from other sources are preserved.
+- `/update` confirm and report copy refreshed: surfaces the CLAUDE.md / CLAUDE_USER.md migration callout for first-time runs to v0.5.1, names the absolute backup path for the old CLAUDE.md, and explicitly lists CLAUDE_USER.md among the untouched user-owned files.
+
+**Migration story for existing workstations:** run `/update` once. Your customized `CLAUDE.md` will be backed up to `_update_backups/{ISO}/CLAUDE.md`. The new plugin `CLAUDE.md` and a starter `CLAUDE_USER.md` will land in place. Copy any custom references, skills, or preferences from the backup into `CLAUDE_USER.md`. The hook gets registered (with your consent). From then on, plugin updates auto-detect at session start and `CLAUDE_USER.md` is untouched on every future `/update`.
+
 ## 0.5.0
 
 `/update` skill lands. Existing users can pull in new reference docs, system schemas, and folder structure without re-running `/setup` or losing local content.

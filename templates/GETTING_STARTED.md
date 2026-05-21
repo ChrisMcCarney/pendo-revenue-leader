@@ -88,7 +88,9 @@ Install via Cowork's connector menu (one-time):
 
 ## Keeping your workstation up to date
 
-When Cowork installs a new version of the plugin, run `/update` to pull in any new reference docs, system schemas, or folder additions. Your `MEMORY.md`, `team.yaml`, `pillars.yaml`, account folders, and person pages are never touched. Anything overwritten lands in `_update_backups/{ISO}/` at your project root so you can recover prior versions.
+When Cowork installs a new version of the plugin, run `/update` to pull in any new reference docs, system schemas, or folder additions. Your `MEMORY.md`, `CLAUDE_USER.md`, `voice-principles.md`, `Backlog.md`, `team.yaml`, `pillars.yaml`, `user-profile.yaml`, account folders, and person pages are never touched. Anything overwritten lands in `_update_backups/{ISO}/` at your project root so you can recover prior versions.
+
+Personal rules, references, and skills go in `CLAUDE_USER.md` at your workstation root, not `CLAUDE.md`. `CLAUDE.md` is plugin-managed and gets replaced on every release; `CLAUDE_USER.md` is yours and never gets touched. The setup wizard offers to register a quiet `SessionStart` hook that auto-invokes `/update` when the plugin has new content; most session starts stay completely silent.
 
 ---
 

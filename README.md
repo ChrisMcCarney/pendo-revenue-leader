@@ -166,9 +166,17 @@ Run:
 /update
 ```
 
-`/update` compares the current plugin's `templates/` tree against your workstation, lists exactly what will change in plain English, and asks before touching anything. It always backs up the prior version of every file it overwrites to `_update_backups/{ISO}/` at your project root. Your `MEMORY.md`, `team.yaml`, `pillars.yaml`, account folders, and person pages are never touched.
+`/update` compares the current plugin's `templates/` tree against your workstation, lists exactly what will change in plain English, and asks before touching anything. It always backs up the prior version of every file it overwrites to `_update_backups/{ISO}/` at your project root. Your `MEMORY.md`, `CLAUDE_USER.md`, `voice-principles.md`, `Backlog.md`, `team.yaml`, `pillars.yaml`, `user-profile.yaml`, account folders, and person pages are never touched.
 
 If nothing has changed since you last updated, the skill exits cleanly with `Already on v{X}. Nothing to do.`
+
+### Customizing CLAUDE.md
+
+Don't edit `CLAUDE.md` directly. `/update` replaces it on every plugin release. Put your local rules, references, custom skills, and voice preferences in `CLAUDE_USER.md` at your workstation root. Both files load at session start; on conflict, the plugin's `CLAUDE.md` wins. `CLAUDE_USER.md` is yours, and `/update` never touches it.
+
+### Auto-update reminder (SessionStart hook)
+
+`/setup` and `/update` offer to register a small `SessionStart` hook in your workstation's `.claude/settings.json`. The hook does a quick version check at session start. If the plugin has new content, it asks Claude to run `/update` for you before responding. If nothing has changed, the hook stays completely silent. You can opt out (or remove it later by editing `.claude/settings.json`).
 
 If you want to contribute changes:
 

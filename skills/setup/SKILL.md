@@ -209,6 +209,7 @@ When the user picks `Other` on any of these, follow up with a single free-text p
 
 - `System/user-profile.yaml` substituted from `templates/System/user-profile.example.yaml`.
 - A substitution pass on `CLAUDE.md` and `MEMORY.md` replacing the identity tokens `{user_name}`, `{user_first_name}`, `{user_role}`, `{user_region}`, `{user_city}`, `{user_timezone}`, `{user_email}`, `{user_slack_handle}`, `{manager_name}`, `{manager_name_first}`, `{company_name}`, `{email_domain}`, `{fiscal_year_start_month}`.
+- `CLAUDE_USER.md` copied verbatim from `templates/CLAUDE_USER.md` (no substitution; the starter file has no identity tokens). This is the user-owned companion to `CLAUDE.md`; `/update` never touches it after this point.
 
 **Failure modes:**
 
@@ -384,6 +385,18 @@ Tell the user verbatim: `No deals owned by your direct reports. Pulling deals ow
 4. If `captured.pipeline.deals_written == 0`, surface: `Your first pipeline run returned zero open deals. Check Salesforce ownership and rerun /regenerate-pipeline.`
 
 5. Surface a per-connector status line: `Connectors:` followed by one bullet per connector with the status from S0 precheck (re-pinged here). For each `failed` or `skipped` connector, name which skills will be affected (Calendar -> /daily-plan, /meeting-prep, /week-plan, /week-review; Gmail -> /daily-plan, /week-review; Granola -> /process-meetings). User can ignore now and connect later when they invoke a dependent skill.
+
+5b. Offer the SessionStart auto-update hook. `AskUserQuestion`: `Auto-detect plugin updates? When the Pendo plugin gets a new version, a quick check at session start can invoke /update for you. Most sessions see no prompt at all (the check is silent when nothing has changed). Recommended.` Options: `Yes, register the hook` / `No, I'll run /update manually` / `Skip for now`.
+
+On `Yes, register the hook`:
+- Resolve the absolute path to `<plugin_root>/hooks/check-update.sh`.
+- Read `.claude/settings.json` at the workstation root if it exists; otherwise start from `{}`.
+- Append (or create) the SessionStart hook entry pointing to `bash <absolute hook path>`. Preserve any pre-existing hooks under `SessionStart` or any other event verbatim. If an entry with the same command already exists, leave it as-is rather than duplicating.
+- Write the merged JSON back to `.claude/settings.json`, pretty-printed with two-space indent.
+- Record `captured.hook.registered_at` and `captured.hook.path` in `.setup-state.yaml`.
+- Print: `SessionStart hook registered at {absolute_path}/.claude/settings.json. Quiet by default; only fires when the plugin has new content.`
+
+On `No, I'll run /update manually` or `Skip for now`: do not modify `.claude/settings.json`. Print: `OK. Run /update manually after each plugin release. You can register the hook later by re-running /setup with the Update one section option, or by running /update which will offer to register it if missing.`
 
 6. Set `current_step: complete`, `last_completed_step: sanity`. Update `updated_at`. Write `installed_plugin_version` from the current `plugin.json` `version` field. This is what `/update` reads later to name the from-version in its summary copy.
 
