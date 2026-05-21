@@ -707,12 +707,12 @@ tr:hover td { background: rgba(255, 255, 255, 0.03); }
             <tr>
               <td><span class="badge b-Upside">Upside</span></td>
               <td class="amt">25%</td>
-              <td>Net ARR ≥ $75k only</td>
+              <td>{{METHODOLOGY_UPSIDE_FLOOR}}</td>
               <td>Smaller upside deals are excluded to avoid noise. Larger ones get a token weight.</td>
             </tr>
           </tbody>
         </table>
-        <pre style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px 16px;margin-top:16px;font-family:var(--font-mono);font-size:12px;color:var(--text-primary);line-height:1.6;overflow-x:auto">Math call = Σ(Commit × 1.0) + Σ(Forecast × 0.8) + Σ(Upside ≥ $75k × 0.25)</pre>
+        <pre style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px 16px;margin-top:16px;font-family:var(--font-mono);font-size:12px;color:var(--text-primary);line-height:1.6;overflow-x:auto">Math call = Σ(Commit × 1.0) + Σ(Forecast × 0.8) + Σ(Upside ≥ team floor × 0.25)</pre>
       </div>
 
       <div class="section">
@@ -844,6 +844,8 @@ function doCopy(btnId, taId) {
 (async () => {
   const TEAM1_REPS = {{TEAM1_REPS_JS}};
   const TEAM2_REPS = {{TEAM2_REPS_JS}};
+  const UPSIDE_THRESHOLD_TEAM1 = {{UPSIDE_THRESHOLD_TEAM1}};
+  const UPSIDE_THRESHOLD_TEAM2 = {{UPSIDE_THRESHOLD_TEAM2}};
   const START = '{{QUARTER_START}}', END = '{{QUARTER_END}}';
 
   // Hide the second tab if team 2 has no reps (RVP single-team mode).
@@ -913,16 +915,16 @@ function doCopy(btnId, taId) {
   };
 
   /* ---- weighted math ---- */
-  const calcW = arr => {
+  const calcW = (arr, threshold) => {
     const floor     = arr.filter(o => catOf(o) === 'Commit');
     const forecast  = arr.filter(o => catOf(o) === 'Forecast');
     const upsideAll = arr.filter(o => catOf(o) === 'Upside');
-    const upside    = upsideAll.filter(o => (o.Net_ARR__c || 0) >= 75000);
+    const upside    = upsideAll.filter(o => (o.Net_ARR__c || 0) >= threshold);
     const floorAmt    = sumArr(floor);
     const forecastAmt = sumArr(forecast);
     const upsideRaw   = sumArr(upside);
     const mathCall    = floorAmt + forecastAmt * 0.8 + upsideRaw * 0.25;
-    return { floor, forecast, upside, upsideAll, floorAmt, forecastAmt, upsideRaw, mathCall };
+    return { floor, forecast, upside, upsideAll, floorAmt, forecastAmt, upsideRaw, mathCall, threshold };
   };
 
   const calcEdge = (arr, w) => {
@@ -932,7 +934,7 @@ function doCopy(btnId, taId) {
       const c = catOf(o), v = o.Net_ARR__c || 0;
       if (c === 'Commit')   discount += v * 0.5;
       else if (c === 'Forecast') discount += v * 0.8 * 0.5;
-      else if (c === 'Upside' && v >= 75000) discount += v * 0.25 * 0.5;
+      else if (c === 'Upside' && v >= w.threshold) discount += v * 0.25 * 0.5;
     });
     return { edge: w.mathCall - discount, discount, riskyDeals };
   };
@@ -1015,8 +1017,8 @@ function doCopy(btnId, taId) {
   const team1Opps = opps.filter(o => getTeam(o.Owner && o.Owner.Name) === 'team1');
   const team2Opps = opps.filter(o => getTeam(o.Owner && o.Owner.Name) === 'team2');
 
-  const team1W = calcW(team1Opps);
-  const team2W = calcW(team2Opps);
+  const team1W = calcW(team1Opps, UPSIDE_THRESHOLD_TEAM1);
+  const team2W = calcW(team2Opps, UPSIDE_THRESHOLD_TEAM2);
   const team1E = calcEdge(team1Opps, team1W);
   const team2E = calcEdge(team2Opps, team2W);
 
@@ -1026,7 +1028,13 @@ function doCopy(btnId, taId) {
   const allRiskyDeals = [...team1E.riskyDeals, ...team2E.riskyDeals];
 
   /* ---- METRIC TILES ---- */
-  const renderMetrics = (elId, w, callLabel) => {
+  const fmtThresholdLabel = n => {
+    if (!n || isNaN(n)) return '$0';
+    if (n >= 1e6) return '$' + (n/1e6).toFixed(n % 1e6 === 0 ? 0 : 1) + 'M';
+    if (n >= 1e3) return '$' + Math.round(n/1e3) + 'k';
+    return '$' + n;
+  };
+  const renderMetrics = (elId, w, callLabel, thresholdLabel) => {
     document.getElementById(elId).innerHTML =
       '<div class="metric m-floor">' +
         '<div class="metric-label">Floor · 100%</div>' +
@@ -1039,7 +1047,7 @@ function doCopy(btnId, taId) {
         '<div class="metric-sub">' + fmt(w.forecastAmt) + ' raw · ' + w.forecast.length + ' deals</div>' +
       '</div>' +
       '<div class="metric m-upside">' +
-        '<div class="metric-label">Upside over $75k · x25%</div>' +
+        '<div class="metric-label">Upside over ' + thresholdLabel + ' · x25%</div>' +
         '<div class="metric-value">' + fmt(w.upsideRaw * 0.25) + '</div>' +
         '<div class="metric-sub">' + fmt(w.upsideRaw) + ' raw · ' + w.upside.length + ' qualify</div>' +
       '</div>' +
@@ -1049,8 +1057,13 @@ function doCopy(btnId, taId) {
         '<div class="metric-sub">Math total</div>' +
       '</div>';
   };
-  renderMetrics('team1-metrics', team1W, '{{TEAM1_NAME}} math call');
-  renderMetrics('team2-metrics', team2W, '{{TEAM2_NAME}} math call');
+  const team1ThresholdLabel = fmtThresholdLabel(UPSIDE_THRESHOLD_TEAM1);
+  const team2ThresholdLabel = fmtThresholdLabel(UPSIDE_THRESHOLD_TEAM2);
+  const rollupThresholdLabel = (UPSIDE_THRESHOLD_TEAM1 === UPSIDE_THRESHOLD_TEAM2 || !TEAM2_REPS || TEAM2_REPS.length === 0)
+    ? team1ThresholdLabel
+    : 'team floor';
+  renderMetrics('team1-metrics', team1W, '{{TEAM1_NAME}} math call', team1ThresholdLabel);
+  renderMetrics('team2-metrics', team2W, '{{TEAM2_NAME}} math call', team2ThresholdLabel);
 
   const rollupW = {
     floor: [...team1W.floor, ...team2W.floor], floorAmt: team1W.floorAmt + team2W.floorAmt,
@@ -1058,7 +1071,7 @@ function doCopy(btnId, taId) {
     upside: [...team1W.upside, ...team2W.upside], upsideRaw: team1W.upsideRaw + team2W.upsideRaw,
     mathCall: combinedMath
   };
-  renderMetrics('rollup-metrics', rollupW, 'Combined math');
+  renderMetrics('rollup-metrics', rollupW, 'Combined math', rollupThresholdLabel);
 
   /* ---- EDGE BOX ---- */
   const edgeDiff = combinedEdge - combinedMath;
@@ -1143,16 +1156,17 @@ function doCopy(btnId, taId) {
       '<th title="M · E · D · D · P · I · C · C">MEDDPICC</th><th>Next steps</th><th>Risk flags</th>' +
     '</tr></thead><tbody>';
 
-  const renderDeals = (elId, teamOpps) => {
+  const renderDeals = (elId, teamOpps, threshold) => {
     const el = document.getElementById(elId);
     if (!el) return;
-    const w = calcW(teamOpps);
+    const w = calcW(teamOpps, threshold);
+    const tLabel = fmtThresholdLabel(threshold);
     let html = '<div class="sec-title">Deal detail</div>';
 
     const sections = [
-      { label: 'Floor · commit · 100%',           cls: 'floor',    deals: w.floor,     raw: w.floorAmt,    pct: 1.0 },
-      { label: 'Forecast · 80%',                  cls: 'forecast', deals: w.forecast,  raw: w.forecastAmt, pct: 0.8 },
-      { label: 'Upside · 25% · over $75k shown',  cls: 'upside',   deals: w.upsideAll, raw: w.upsideRaw,   pct: 0.25, qualifyCount: w.upside.length },
+      { label: 'Floor · commit · 100%',                          cls: 'floor',    deals: w.floor,     raw: w.floorAmt,    pct: 1.0 },
+      { label: 'Forecast · 80%',                                 cls: 'forecast', deals: w.forecast,  raw: w.forecastAmt, pct: 0.8 },
+      { label: 'Upside · 25% · over ' + tLabel + ' shown',       cls: 'upside',   deals: w.upsideAll, raw: w.upsideRaw,   pct: 0.25, qualifyCount: w.upside.length },
     ];
 
     sections.forEach(s => {
@@ -1173,8 +1187,8 @@ function doCopy(btnId, taId) {
     el.innerHTML = html;
   };
 
-  renderDeals('team1-deals', team1Opps);
-  renderDeals('team2-deals', team2Opps);
+  renderDeals('team1-deals', team1Opps, UPSIDE_THRESHOLD_TEAM1);
+  renderDeals('team2-deals', team2Opps, UPSIDE_THRESHOLD_TEAM2);
 
   /* ---- RISK TABLE (rollup) ---- */
   const allOpps = [...team1Opps, ...team2Opps];
@@ -1221,6 +1235,7 @@ function doCopy(btnId, taId) {
 
   const genTeamText = (teamLabel, manager, w, edgeData) => {
     const d = now.toLocaleDateString('en-AU', {weekday:'long', month:'long', day:'numeric', year:'numeric'});
+    const tLabel = fmtThresholdLabel(w.threshold);
     const lines = [
       teamLabel + ' - {{QUARTER_LABEL}} forecast',
       'Manager: ' + manager,
@@ -1229,7 +1244,7 @@ function doCopy(btnId, taId) {
       'CALL: ' + fmtFull(edgeData.edge),
       'Floor (100%): ' + fmtFull(w.floorAmt),
       'Forecast (80%): ' + fmtFull(w.forecastAmt * 0.8) + ' (' + fmtFull(w.forecastAmt) + ' raw)',
-      'Upside over $75k (25%): ' + fmtFull(w.upsideRaw * 0.25) + ' (' + fmtFull(w.upsideRaw) + ' raw)',
+      'Upside over ' + tLabel + ' (25%): ' + fmtFull(w.upsideRaw * 0.25) + ' (' + fmtFull(w.upsideRaw) + ' raw)',
     ];
     if (edgeData.discount > 0) lines.push('Risk adjustment: -' + fmtFull(edgeData.discount) + ' (' + edgeData.riskyDeals.length + ' flagged)');
     lines.push('');
@@ -1244,7 +1259,7 @@ function doCopy(btnId, taId) {
 
     writeSection('FLOOR - commit', w.floor, w.floorAmt, 1.0);
     writeSection('FORECAST - best case', w.forecast, w.forecastAmt, 0.8);
-    writeSection('UPSIDE - over $75k', w.upside, w.upsideRaw, 0.25);
+    writeSection('UPSIDE - over ' + tLabel, w.upside, w.upsideRaw, 0.25);
 
     const allFlagged = [...w.floor, ...w.forecast, ...w.upside]
       .filter(o => getRisk(o).length > 0)

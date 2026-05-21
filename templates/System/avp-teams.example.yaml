@@ -1,0 +1,36 @@
+# AVP Teams - example
+#
+# Present this file to put avp-pipeline-review into AVP (second-line) mode.
+# Renders one tab per team plus a combined AVP rollup tab.
+#
+# avp-pipeline-review reads this on every run. On first run, if
+# upside_threshold_default is missing, the skill prompts for it and writes it
+# here. It then offers per-leader overrides for any team in the list.
+
+# Default upside Net ARR floor across all teams.
+# Each team can override with its own upside_threshold below.
+upside_threshold_default: 75000
+
+teams:
+  - name: "TOLA"
+    manager: "Justin Johnson"
+    upside_threshold: 50000   # optional per-leader override; remove this line to use the default
+    reps:
+      - "Nate Foss"
+      - "Taylor Hooker"
+      - "James Duncanson"
+      - "David Parks"
+    like_clauses: []
+
+  - name: "Central"
+    manager: "Laura Vancosky"
+    # no upside_threshold here → uses upside_threshold_default
+    reps:
+      - "Cassie Sweet"
+      - "Elizabeth Evans"
+      - "Sebastian Hickerson"
+      - "Aaron Wyler"
+      - "Christa Bryant"
+    like_clauses:
+      - "Ariela%"
+      - "%Gronski%"

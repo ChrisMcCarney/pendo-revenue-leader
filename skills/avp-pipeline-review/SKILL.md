@@ -20,7 +20,7 @@ The artifact template in `assets/artifact-template.html` must already include th
 
 This skill creates a live Cowork artifact that pulls Salesforce opportunity data on demand and renders a full pipeline review dashboard with:
 
-- Weighted math call: 100% Commit plus 80% Forecast plus 25% Upside (deals ≥ A$75k only).
+- Weighted math call: 100% Commit plus 80% Forecast plus 25% Upside (deals ≥ the leader-set Net ARR floor, default A$75k; configurable per team in AVP mode).
 - MEDDPICC gap detection with per-field highlighting.
 - Risk flags per deal: excessive pushes, close-date proximity, MEDDPICC gaps, missing next steps.
 - Educated edge call: math call minus a 50% haircut on deals with two or more risk flags.
@@ -86,6 +86,51 @@ Do not proceed.
 
 ---
 
+## Step 2b. Resolve the upside dollar floor
+
+The math call's upside slice is filtered by a Net ARR minimum (default A$75,000). Each leader sets their own floor once; AVPs may also set per-manager overrides. The 25% upside weight is fixed and not configurable.
+
+**RVP mode procedure:**
+
+1. Read `team.yaml`. Check whether the top-level key `upside_threshold` is present (an integer dollar amount).
+2. If missing, ask the user **once**:
+
+   `Set the upside dollar floor for the math call. Deals in the Upside category below this Net ARR are excluded. Default A$75,000. Enter a dollar value (digits only, no commas):`
+
+   Validate as a positive integer. Reject zero, negatives, and non-numeric input by re-asking.
+3. Write the value back to `team.yaml` as a new top-level field `upside_threshold: <int>`. Preserve all existing keys, comments, and ordering — read the file, parse YAML, mutate the dict, dump back. Never blind-replace strings.
+4. Echo: `Saved upside_threshold = A$<value> to System/team.yaml. Edit the file directly to change later.`
+5. Set `team_threshold_team1 = team.yaml.upside_threshold`. RVP mode has no team 2 threshold; set `team_threshold_team2 = 0`.
+
+**AVP mode procedure:**
+
+1. Read `avp-teams.yaml`. Check whether the top-level key `upside_threshold_default` is present.
+2. If missing, ask:
+
+   `Set the default upside dollar floor across all teams. Default A$75,000. Enter a dollar value (digits only, no commas):`
+
+   Validate as above. Write `upside_threshold_default: <int>` to the file (preserve order/comments).
+3. Then ask:
+
+   `Want to override the floor for any specific manager? (y/n)`
+
+4. If yes, render a numbered list of managers from `teams[].manager`. Accept comma-separated indices (e.g. `1,3`). For each chosen manager prompt:
+
+   `Floor for {manager}? (default = A$<default>):`
+
+   Write the per-team override as `upside_threshold: <int>` inside that team's entry in `teams[]`. Leave non-overridden teams' entries untouched.
+5. For each team in `teams[]`, compute `team_threshold = team.upside_threshold || upside_threshold_default`. Use TEAM1's and TEAM2's resolved values for the Step 4 substitutions below.
+
+**Re-prompt rule (subsequent runs):**
+
+- If `upside_threshold_default` is already set but a team entry lacks `upside_threshold`, that team simply uses the default. Do not interactively prompt — instead, on AVP runs, before generating the artifact, echo once per new manager:
+
+  `Manager {name} uses the default floor of A$<default>. Edit avp-teams.yaml to add upside_threshold for an override.`
+
+  "New" means: a manager whose name was not present the last time the skill ran. The skill is not required to track this precisely; emitting the line for any team without `upside_threshold` set is acceptable.
+
+---
+
 ## Step 3. Probe Salesforce field names for this org
 
 Run a quick SOQL probe so the artifact does not blow up on field-name mismatches. The known Pendo Salesforce orgs use:
@@ -143,6 +188,9 @@ Read the template from `assets/artifact-template.html` in this skill folder. The
 | `{{TEAM2_REPS_JS}}` | JS array of rep names, or empty array `[]` in single-team mode |
 | `{{TEAM2_LIKE_JS}}` | optional JS branch that matches fuzzy patterns and returns `'team2'`. Empty string `''` if no LIKE patterns. Example for one pattern: `if (/Surname/i.test(name)) return 'team2';` |
 | `{{LIKE_CLAUSES}}` | SOQL `OR Owner.Name LIKE '%Surname%' ...` clauses, or empty string |
+| `{{UPSIDE_THRESHOLD_TEAM1}}` | integer Net ARR floor for TEAM1 (resolved in Step 2b: per-team override or default). E.g. `75000`. |
+| `{{UPSIDE_THRESHOLD_TEAM2}}` | integer for TEAM2; `0` if TEAM2 is empty (RVP single-team mode). |
+| `{{METHODOLOGY_UPSIDE_FLOOR}}` | RVP mode: `Net ARR ≥ $75,000 only` (use the actual TEAM1 value). AVP mode: `Net ARR ≥ each team's configured floor (default $75,000). See team metric tiles for each team's value.` Format the dollar amount with thousands separators. |
 
 The template uses no emojis. Tab labels are sentence-case team names. The dashboard runs dark by default (Pendo FY27 brand: black background, graphite cards, Pendo Pank as accent, Sora Bold for display, Inter for body, sentence case throughout).
 
@@ -208,9 +256,11 @@ Where `{{LIKE_CLAUSES}}` is the empty string for exact-match teams, or `OR Owner
 ### Weighted math
 
 ```
-Math Call = sum(Commit × 1.0) + sum(Forecast × 0.8) + sum(Upside[≥ A$75k] × 0.25)
+Math Call = sum(Commit × 1.0) + sum(Forecast × 0.8) + sum(Upside[≥ team_floor] × 0.25)
 Edge Call = Math Call - sum(deals_with_2+_flags × weighted_contribution × 0.5)
 ```
+
+`team_floor` is the per-team upside Net ARR floor resolved in Step 2b. In RVP mode it is the single value from `team.yaml.upside_threshold`. In AVP mode each team uses its own `upside_threshold` (or falls back to `upside_threshold_default`).
 
 ### Risk flags (per deal)
 
@@ -255,9 +305,14 @@ Schema:
 
 ```yaml
 # System/avp-teams.yaml
+
+# Default upside Net ARR floor across all teams. Each team can override.
+upside_threshold_default: 75000
+
 teams:
   - name: "TOLA"
     manager: "Justin Johnson"
+    upside_threshold: 50000   # optional per-leader override
     reps:
       - "Nate Foss"
       - "Taylor Hooker"
@@ -267,6 +322,7 @@ teams:
 
   - name: "Central"
     manager: "Laura Vancosky"
+    # no upside_threshold → uses upside_threshold_default
     reps:
       - "Cassie Sweet"
       - "Elizabeth Evans"

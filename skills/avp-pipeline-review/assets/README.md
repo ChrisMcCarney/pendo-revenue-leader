@@ -15,6 +15,9 @@ The template must contain these placeholders for the skill to fill in at runtime
 - `{{QUARTER_START}}` - ISO date of fiscal-quarter start.
 - `{{QUARTER_END}}` - ISO date of fiscal-quarter end.
 - `{{TEAMS_JS}}` - JS array literal of `{ name, manager, reps, like_clauses }` objects.
+- `{{UPSIDE_THRESHOLD_TEAM1}}` - integer Net ARR floor for TEAM1's upside slice (resolved by SKILL.md Step 2b).
+- `{{UPSIDE_THRESHOLD_TEAM2}}` - integer for TEAM2's floor, or `0` in RVP single-team mode.
+- `{{METHODOLOGY_UPSIDE_FLOOR}}` - human-readable sentence for the methodology tab describing the upside floor (RVP uses the single value; AVP describes the default + per-team overrides).
 
 ## Template requirements
 

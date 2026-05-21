@@ -1,5 +1,16 @@
 # Release notes
 
+## 0.6.4
+
+`/avp-pipeline-review` now lets each leader set the upside dollar floor used in the math call (previously hardcoded to A$75,000). On first run the skill prompts for the value and persists it.
+
+- RVP mode: prompts once, writes `upside_threshold:` to `System/team.yaml`.
+- AVP mode: prompts for `upside_threshold_default:` in `System/avp-teams.yaml`, then offers optional per-leader overrides as `upside_threshold:` inside each team entry. Subsequent runs are silent unless a new manager appears without a configured floor.
+- The 25% upside weight is unchanged.
+- The generated artifact now renders the chosen floor in every place it was previously hardcoded (metric tiles, methodology tab, deal-detail headers, copyable plain-text reports). In AVP mode where teams differ, each team's tile shows its own floor and the rollup tile shows "team floor".
+
+New template: `templates/System/avp-teams.example.yaml` documents the AVP schema with one default and one per-leader override.
+
 ## 0.6.3
 
 Patch fix to the SessionStart hook manifest location and shape. v0.6.2 declared the hook at `.claude-plugin/hooks.json` with a top-level `{"SessionStart": [...]}` structure; Cowork didn't recognise either and the hook stayed invisible in the Customize panel.

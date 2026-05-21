@@ -57,6 +57,11 @@ manager:
   name: "{manager_name}"
   slack: "{manager_slack_handle}"
 
+# Upside dollar floor for the avp-pipeline-review math call (RVP mode).
+# Net ARR minimum for an Upside-category deal to be included in the weighted math.
+# The skill prompts you to set this on first run if missing; edit here to change later.
+upside_threshold: 75000
+
 # ---
 # Scope conventions for skills
 # ---
