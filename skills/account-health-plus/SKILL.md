@@ -7,9 +7,7 @@ description: Produce a unified Account Health + Entitlements brief for any Pendo
 
 A unified pre-call, renewal-prep, or QBR brief for any Pendo customer. The skill assumes the reader will walk into a meeting with the customer within 24 hours and needs the essential read in one document: usage, sentiment, risk, entitlement, commercial status, stakeholders, and the next-conversation prompts.
 
-The primary "how is this account using Pendo" signal comes from **pendo-internal** (the subscription that tracks Pendo's own product, app.pendo.io). Each Pendo customer appears in pendo-internal as a Pendo account whose visitors are the customer's employees logging in to administer guides, analytics, surveys, etc. Pendo employees (sellers, SEs, CS) almost always have access to pendo-internal, which is why this skill anchors its usage view there.
-
-End-user consumption metrics (how many of the customer's end users saw a guide, NPS responses they answered, feedback they submitted, session replays) live in the customer-owned Pendo subscriptions. Pendo employees usually do NOT have admin scope on those. When access exists, the skill enriches the brief with end-user data; when it doesn't, the brief explicitly notes the gap rather than failing.
+The scope is entirely the customer's use of the Pendo application. The usage signal comes from **pendo-internal** (the subscription that tracks Pendo's own product, app.pendo.io). Each Pendo customer appears in pendo-internal as an account whose visitors are their employees logging in to administer guides, analytics, surveys, and so on. Pendo employees (sellers, SEs, CS) almost always have access to pendo-internal, which is why this skill anchors its usage view there. End-user metrics on the customer's own product (guide views by end users, NPS responses they answered, feedback they submitted, session replays) are out of scope. The brief covers how the customer's team uses Pendo, not how their end users use their product.
 
 The shape extends the existing `/account-health` style report (engagement, feature usage, NPS, feedback, CRE, suggested topics) with three sections that turn it from a status doc into an action doc: a normalised FY25 entitlement view, module-gap upsell plays grounded in real usage signals, and a commercial / MEDDPICC read.
 
@@ -26,9 +24,9 @@ Stop early and surface a clear error if any of these are true. Do not produce a 
 2. Account has no `Subscription__c` records that are `Installed__c = true` and not disabled.
 3. SFDC connector is unreachable.
 4. `00_Resources/pricing-packaging-mapping.md` is missing from the workstation. This file is the legacy-to-FY25 crosswalk and is required for Step 3. If absent, surface: `This skill requires 00_Resources/pricing-packaging-mapping.md in your workstation (the legacy-to-FY25 packaging crosswalk). Drop the file in and re-run, or ask Chris where the latest version lives.` and stop.
-5. Pendo MCP access is fully blocked. The account cannot be found in pendo-internal by SFDC name **and** none of the customer-owned Pendo Sub IDs are accessible via `list_all_applications`. Surface: `The account doesn't appear in pendo-internal by SFDC name and I don't have access to its customer-owned Pendo subscriptions - I can't produce a Pendo usage view.` and stop. Note: failure to access customer-owned subs alone is **not** a fail-fast; the primary usage view comes from pendo-internal.
+5. Pendo MCP access is blocked. The account cannot be found in pendo-internal by SFDC name. Surface: `The account doesn't appear in pendo-internal by SFDC name - I can't produce a Pendo usage view.` and stop.
 
-The skill exists to fuse usage data with commercial data. Without any Pendo data the result would be misleading.
+The skill exists to fuse usage data with commercial data. Without Pendo data the result would be misleading.
 
 ## Workflow
 
@@ -99,13 +97,9 @@ Determine the pricing era from the line items:
 
 Capture the FY25 bundle equivalent if applicable (Base / Core / Pulse / Ultimate) — see the mapping doc's bundle section.
 
-### Step 4: Pull Pendo usage from pendo-internal (primary) and customer subs (secondary)
+### Step 4: Pull Pendo usage from pendo-internal
 
-Pendo data lives across two planes. The skill anchors the primary usage view on pendo-internal (which Pendo employees can almost always read) and treats the customer-owned subs as optional enrichment.
-
-#### 4a. PRIMARY path: pendo-internal (subId `5668600916475904`)
-
-This is the subscription that tracks Pendo's own product (app.pendo.io). Each Pendo customer appears here as an account whose visitors are the customer's employees administering Pendo (configuring guides, viewing analytics, etc.). This is the strongest signal of which Pendo modules are real vs. paid-but-unused, and it's almost always accessible to Pendo employees.
+Pendo usage data for this skill comes exclusively from pendo-internal (subId `5668600916475904`), the subscription that tracks Pendo's own product (app.pendo.io). Each Pendo customer appears here as an account whose visitors are the customer's employees administering Pendo (configuring guides, viewing analytics, etc.). This is the strongest signal of which Pendo modules are real vs. paid-but-unused, and it's almost always accessible to Pendo employees. Customer-owned Pendo subscriptions are out of scope: the brief intentionally does not query end-user data from the customer's own product.
 
 1. Resolve the Pendo account ID(s) for this SFDC customer:
 
@@ -118,7 +112,7 @@ This is the subscription that tracks Pendo's own product (app.pendo.io). Each Pe
    )
    ```
 
-   This returns zero, one, or several Pendo account IDs (e.g. `["Tradiecore", "Tradiecore1"]`). Cross-instance customers commonly have more than one. If zero results, fall through to 4b (the customer might only be tracked in customer-owned subs).
+   This returns zero, one, or several Pendo account IDs (e.g. `["Tradiecore", "Tradiecore1"]`). Cross-instance customers commonly have more than one. If zero results, stop with fail-fast condition 5.
 
 2. For each matched Pendo account ID, in parallel:
 
@@ -198,31 +192,13 @@ This is the subscription that tracks Pendo's own product (app.pendo.io). Each Pe
 
 If the customer has multiple Pendo account IDs (e.g. multiple instances), report each separately in the Engagement section. Do not silently merge.
 
-#### 4b. SECONDARY path: customer-owned subs (optional, only when accessible)
-
-Call `list_all_applications` from the Pendo MCP. For each `Pendo_Sub_Pendo_ID__c` returned in Step 2, check whether it appears in the accessible list.
-
-- **If at least one is accessible:** for each accessible sub + app, in parallel:
-  - `visitorQuery` with `count=false` for the customer's end-user visitor list.
-  - `productEngagementScore` for high-level engagement.
-  - `guideMetrics` for guide views/completions (Guides Pro adoption evidence).
-  - `listGuides` for published guide count.
-  - `npsScore` for promoter/passive/detractor breakdown.
-  - `get_feedback_insights` and `get_feedback_items` for feedback topics.
-  - `sessionReplayList` for Session Replay activity.
-  - `agent_analytics_key_metrics` for Agent Analytics prompts (upsell signal even if not entitled).
-
-  These metrics feed the "End-user activity" subsection in Section 1 and enrich adoption grades in Section 4.
-
-- **If none are accessible:** continue with the report. Explicitly mark every end-user metric in the report as `not accessible (no admin scope on customer-owned Pendo subs)`. Do not fabricate.
-
 #### Fail-fast at the end of Step 4
 
-If 4a returns no matching Pendo account ID AND 4b finds no accessible customer-owned subs, stop with fail-fast condition 5 above. Anything weaker than that, continue.
+If the pendo-internal `accountQuery` returns no matching Pendo account ID, stop with fail-fast condition 5 above.
 
 #### Trend deltas
 
-For visitor counts and similar metrics, query the prior equivalent window (e.g. days 91-180 if window is 90 days) to compute the % change. The narrative needs the trend, not just the absolute number. Apply this to both pendo-internal employee counts and customer-owned end-user counts where accessible.
+For visitor counts and similar metrics, query the prior equivalent window (e.g. days 91-180 if window is 90 days) to compute the % change. The narrative needs the trend, not just the absolute number. Apply this to pendo-internal employee counts and the synced end-user counters (`da_visitors30/90`, `da_events30/90`) that ride on pendo-internal's account metadata.
 
 #### Partial failures
 
@@ -291,20 +267,9 @@ Module-to-feature-area mapping for the top-features signal:
 | Agent Analytics | Agent Analytics dashboards (only available where entitled) |
 | Data Sync | Data Sync configuration pages, integration setup |
 
-**Fallback rubric when end-user metrics from customer-owned subs are accessible** (Step 4b). Use these alongside the feature-usage signal for richer grading:
+MAU figures from `Subscription__c` (Step 2) are billing/entitlement reference only and surface in Section 4's "MAU pools and utilisation" line. They are not used to grade adoption: a customer can be at 90% MAU with zero admin engagement, in which case the Pendo value isn't being captured even though the meter is full.
 
-| Module | Heavy | Moderate | Light | Unused |
-| --- | --- | --- | --- | --- |
-| Platform | MAU >50% of entitled cap | 20-50% | <20% but >0 | 0 |
-| Guides Pro | 10+ guides published + recent views | 3-10 guides, some views | 1-2 guides, low views | 0 published |
-| Listen | 50+ feedback items in window | 10-50 | 1-10 | 0 |
-| Sentiment | 100+ NPS responses | 20-100 | 1-20 | 0 |
-| Session Replay | SR MAU >50% of SR cap | 20-50% | <20% but >0 | 0 |
-| Agent Analytics | Prompts >30% of entitled cap | 10-30% | <10% but >0 | 0 |
-
-When both signals are available, they should agree. When they don't (e.g. Analytics shows Light by feature-usage but Heavy by MAU), surface the disagreement in the report and lean on the feature-usage signal — MAU presence without admin engagement usually means the analytics value isn't being captured.
-
-For modules **not** entitled, also check whether there's a usage signal (e.g. Agent prompts observed but no Agent Analytics SKU, or heavy Workflow Studio feature use without Orchestrate entitlement). If so, grade as **Signal** — these feed directly into the upsell section.
+For modules **not** entitled, also check whether there's a usage signal in the pendo-internal employee feature list (e.g. heavy Workflow Studio feature use without Orchestrate entitlement). If so, grade as **Signal** — these feed directly into the upsell section.
 
 **Surface the "data analyst" headline.** If the customer has a tagged Data Analyst or Analytics Lead role (Step 4a employee visitor list with `salesforce.title` like Data Analyst, Analytics Manager, Insights Lead) and that person has low days-active or hasn't logged in recently, name it explicitly. This is the canonical Mixpanel-vs-Pendo signal: when the people who *should* be in the analytics module aren't, the module's value is at risk.
 
@@ -356,30 +321,18 @@ Source: pendo-internal, Pendo account ID(s) {comma-separated IDs}.
 
 {1-2 sentences interpreting WHO is using Pendo: role concentration, missing roles, single-points-of-failure. Name the data analyst / analytics lead status explicitly if surfaced.}
 
-### End-user activity ({Customer Name}'s product, synced into pendo-internal)
+### Synced end-user counters (pendo-internal metadata)
 
-Source: pendo-internal account metadata (synced from the customer's own Pendo sub).
+Billing/entitlement reference only - shown so the reader can see MAU pressure against the contract. Not used as adoption evidence; the admin-side activity above is the canonical usage signal.
 
-- da_visitors30 (end users on customer's product, last 30 days): **{X}**
-- da_visitors90 (last 90 days): **{X}**
+Source: pendo-internal account metadata.
+
+- da_visitors30: **{X}**
+- da_visitors90: **{X}**
 - da_events30: {X}
 - da_events90: {X}
 - da_apps total / active: {X} / {X}
 - Observation freshness (auto.lastvisit): {date} ({N} days ago)
-
-{1-2 sentences on the end-user picture. Note if customer-owned sub access is available for richer end-user metrics (Section 1c below); otherwise mark as not accessible.}
-
-### End-user deep usage (from customer-owned Pendo subs — only if accessible)
-
-{Either:}
-
-- Unique end-user visitors over the last {N} days (customer's product): **{X}**, {trend}
-- Top end-user features: {list}
-- Top end-user pages: {list}
-
-{Or, if customer-owned subs are not accessible:}
-
-- Not accessible (no admin scope on customer-owned Pendo subscriptions: {comma-separated Pendo Sub IDs}). The admin-side and synced metrics above remain authoritative.
 
 ## 2. Pendo modules employees actually use
 
@@ -415,16 +368,26 @@ This is the strongest single signal of which modules are real vs paid-but-unused
 {Or, if no open CRE:}
 - No active CRE on this account.
 
-### Feedback topics
-{Top 3-5 feedback topics in window with volume, or "No feedback items collected in the last {N} days."}
+### Listen module usage
 
-### NPS
-- Promoters: {N} | Passives: {N} | Detractors: {N} (total {N} responses)
-- NPS score: {score} ({delta vs prior period})
+Tracks whether the customer is using Pendo's Listen module to capture feedback, not the feedback their end users have submitted.
 
-{Or, if zero responses:} No NPS responses collected in the last {N} days. NPS guides published: {N}.
+- Listen admin features in employee top-features list: {yes/no, with feature names if yes}
+- Last admin engagement with Listen: {date or "no engagement in window"}
 
-{1-2 sentence interpretation. Tie CRE + sentiment + feedback together where signals align (e.g. "Open CRE for adoption risk aligns with the visitor decline; NPS not being collected closes off the most direct sentiment signal").}
+{1 sentence: if Listen is entitled and no admin features appear, the module is paid-but-unused. Surface that.}
+
+### Sentiment module usage
+
+Tracks whether the customer is using Pendo's Sentiment module (NPS, CSAT) to ask the question, not the answers their end users gave.
+
+- NPS surveys published: {publishednpscount from pendo-internal metadata}
+- CSAT surveys published: {publishedcsatcount from pendo-internal metadata}
+- Sentiment admin features in employee top-features list: {yes/no}
+
+{1 sentence interpretation. If both counts are zero, that is the finding: the Sentiment module is entitled but the customer isn't running a sentiment programme.}
+
+{1-2 sentence joint interpretation. Tie CRE + Listen/Sentiment module usage together where signals align (e.g. "Open CRE for adoption risk aligns with no Sentiment activity in the window; the customer has no live way of hearing from their users in Pendo").}
 
 ## 4. Current entitlements
 
@@ -504,7 +467,7 @@ Six topics maximum. Each is a single bullet that opens a conversation. Pull from
 
 ---
 
-*Generated by /account-health-plus on {date} from live SFDC + Pendo MCP via pendo-internal cross-account lookup. End-user consumption metrics (guide views, NPS responses, feedback items, session replay) require admin scope on customer-owned Pendo subscriptions and are noted as "not accessible" when missing rather than failing the report. To refresh, rerun the skill.*
+*Generated by /account-health-plus on {date} from live SFDC + Pendo MCP via pendo-internal cross-account lookup. Scope is the customer's use of Pendo only; end-user metrics on the customer's own product are intentionally out of scope. To refresh, rerun the skill.*
 ```
 
 ## Writing rules for the report
@@ -530,11 +493,10 @@ Six topics maximum. Each is a single bullet that opens a conversation. Pull from
 - **Pendo sub is installed but customer is in early days (low data volume):** Don't fail; produce the report with the data that exists and call out the early-days context in Overall Health.
 - **CRE object doesn't exist in SFDC:** Note "CRE not tracked in this org's SFDC schema" in section 3 and move on. Don't fabricate.
 - **Account has no open opportunities:** Section 6 still appears, says "No open opportunities" and surfaces the most recent closed-won renewal date as the de facto renewal anchor.
-- **Account is not installed in pendo-internal but the customer is actively using their own Pendo sub.** Rare for paying customers but it can happen for self-serve or Free tier. If `accountQuery` against pendo-internal returns no matching account, before declaring the report blocked check `Subscription__c.Pendo_Sub_Pendo_ID__c` values from Step 2 against `list_all_applications`. If at least one customer-owned sub is accessible, build the report from that data alone, mark the Section 1 admin-side subsection as "not tracked in pendo-internal under this SFDC name", and proceed. Only fail-fast (condition 5) when both planes are inaccessible.
 - **Customer has multiple Pendo account IDs in pendo-internal** (e.g. `Tradiecore` and `Tradiecore1`, separate instances). Report each Pendo account ID separately in Section 1 admin-side activity. Do not silently merge employee lists, feature usage, or visitor counts; separate instances often have different operating teams and adoption levels.
 
 ## Why this skill exists
 
 The existing `/account-health` skill answers "how are they using Pendo?" Sales leaders also need to answer "what are they paying for, what aren't they using, what should we sell next, and is the renewal in trouble?" - and they need it in one document, not three. This skill fuses the two views so an AE walking into a customer call, a CS reviewing health, or a sales leader prepping a forecast call has a single canonical source.
 
-The fail-fast on Pendo access is intentional: a report that says "MAU utilisation is high" without the underlying number is worse than no report. If we can't get the data, we say so rather than guess.
+The fail-fast on pendo-internal access is intentional: if we can't see how the customer's team uses Pendo, we stop rather than guess at adoption. The scope is deliberately narrow - the customer's use of Pendo, not their end users' use of their own product - so the brief stays honest about what it can and can't tell you.

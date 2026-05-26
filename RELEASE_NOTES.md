@@ -1,5 +1,15 @@
 # Release notes
 
+## 0.6.6
+
+Tighten `/account-health-plus` scope to the customer's use of the Pendo application. The previous version pulled end-user data from the customer's own Pendo subscriptions as a secondary enrichment path; this version removes that path and grades adoption only on how the customer's employees use Pendo.
+
+- Delete Step 4b (customer-owned-sub Pendo MCP calls): `visitorQuery`, `productEngagementScore`, `guideMetrics`, `listGuides`, `npsScore`, `get_feedback_insights`, `get_feedback_items`, `sessionReplayList`, `agent_analytics_key_metrics`. Step 4 is now a single path against pendo-internal.
+- Fail-fast condition 5 triggers when the account cannot be found in pendo-internal; customer-owned-sub access is no longer evaluated.
+- Step 6 drops the MAU/published-guides/feedback-items fallback rubric. Adoption is graded only from the pendo-internal employee top-features signal. MAU figures remain in Section 4 as billing/entitlement reference, not adoption evidence.
+- Report template: remove the "End-user deep usage" subsection. Synced end-user counters (`da_visitors30/90`, `da_events30/90`) stay as billing/entitlement reference only, clearly labelled. NPS and Feedback subsections now surface Pendo-module usage (Sentiment surveys published, Listen admin engagement) rather than end-user responses.
+- Drop the "not in pendo-internal but using their own Pendo sub" edge case; that path now fails fast under condition 5.
+
 ## 0.6.5
 
 Close a setup-time gap that broke `/account-health-plus` on fresh installs and surfaced as a missing-file error on a new device.
