@@ -390,7 +390,9 @@ Tell the user verbatim: `No deals owned by your direct reports. Pulling deals ow
 
 6. Set `current_step: complete`, `last_completed_step: sanity`. Update `updated_at`. Write `installed_plugin_version` from the current `plugin.json` `version` field. This is what `/update` reads later to name the from-version in its summary copy.
 
-7. Close with one of two lines depending on local time:
+7. Required files audit. Read the `update_categories.files` block from the plugin's `placeholder-map.yaml`. For every entry whose `category` is `managed_reference` or `system_schema` and whose path starts with `00_Resources/`, `System/`, or `Templates/`, confirm the file exists in the new workstation. For every entry whose `category` is `user_owned_seed`, confirm the file exists (it should have been seeded by an earlier step). Any missing file is a regression — append it to `captured.warnings` and surface a single line in the summary: `Missing required file: {path}. Re-run /setup with "Update one section" and pick the closest matching step, or run /update to backfill.` Do not block completion; this is a guardrail to catch interrupted template copies or new plugin files that an old install missed. Skills that fail-fast on these paths (for example `/account-health-plus` on `00_Resources/pricing-packaging-mapping.md`) need them present, so surface the gap loudly.
+
+8. Close with one of two lines depending on local time:
    - If today is a weekday before 4pm in `{user_timezone}`: `You are set up. Run /daily-plan now to see today's brief, or tomorrow morning as your regular rhythm.`
    - Otherwise: `You are set up. Try /daily-plan tomorrow morning.`
 

@@ -1,5 +1,15 @@
 # Release notes
 
+## 0.6.5
+
+Close a setup-time gap that broke `/account-health-plus` on fresh installs and surfaced as a missing-file error on a new device.
+
+- Ship `templates/00_Resources/pricing-packaging-mapping.md` so `/account-health-plus` no longer fail-fasts on a fresh install with "this skill requires `00_Resources/pricing-packaging-mapping.md` in your workstation". The file is now plugin-managed; previously it was documented as user-supplied.
+- Ship `templates/00_Resources/brand/fy27/INDEX.md` and `templates/00_Resources/brand/fy27/README.md` so the FY27 brand reference cited in `CLAUDE.md`'s References table resolves on first install.
+- Register all three files in `placeholder-map.yaml` as `managed_reference` so `/update` backfills them for existing workstations on the next session.
+- Add a required-files audit at `/setup` step S8 (renumbered: new step 7, close moved to step 8). After the state file finalises, the audit walks the `managed_reference`, `system_schema`, and `user_owned_seed` entries in `placeholder-map.yaml` and surfaces any missing file as a warning in the summary. Belt-and-braces guardrail against interrupted template copies.
+- Trim the now-outdated "Not shipped with the plugin" note from `skills/account-health-plus/SKILL.md` line 522. The fail-fast logic at line 28 is unchanged.
+
 ## 0.6.4
 
 `/avp-pipeline-review` now lets each leader set the upside dollar floor used in the math call (previously hardcoded to A$75,000). On first run the skill prompts for the value and persists it.

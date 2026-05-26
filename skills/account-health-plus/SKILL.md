@@ -519,7 +519,7 @@ Six topics maximum. Each is a single bullet that opens a conversation. Pull from
 
 ## Reference files
 
-- `00_Resources/pricing-packaging-mapping.md` - mandatory read in Step 3. Defines the legacy-to-FY25 crosswalk. **Not shipped with the plugin** because it contains proprietary Pendo packaging detail; users source it from Chris or product ops and drop it into their workstation's `00_Resources/` folder. The skill fails fast (condition 5) if absent.
+- `00_Resources/pricing-packaging-mapping.md` - mandatory read in Step 3. Defines the legacy-to-FY25 crosswalk. Ships with the plugin as of v0.6.5 and is written into the workstation by `/setup` (and backfilled by `/update`). The skill still fails fast (condition 4) if absent — for example if a user deleted the file or installed an older plugin version that predates v0.6.5.
 - `00_Resources/voice-principles.md` - check before generating prose sections (overall health, interpretations, discussion topics).
 - `00_Resources/salesforce-fields.md` - SFDC field reference if any query field is unclear.
 

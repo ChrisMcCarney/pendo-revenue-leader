@@ -333,6 +333,9 @@ update_categories:
     "00_Resources/communication-profile.md": { category: managed_reference }
     "00_Resources/connectors.md":          { category: managed_reference }
     "00_Resources/salesforce-fields.md":   { category: managed_reference }
+    "00_Resources/pricing-packaging-mapping.md": { category: managed_reference, since: "0.6.5", affects_skills: [account-health-plus] }
+    "00_Resources/brand/fy27/INDEX.md":    { category: managed_reference, since: "0.6.5" }
+    "00_Resources/brand/fy27/README.md":   { category: managed_reference, since: "0.6.5" }
 
     # YAML configs that skills depend on. Replace with parse check.
     "System/cep-stages.yaml":
