@@ -190,6 +190,16 @@ Pendo usage data for this skill comes exclusively from pendo-internal (subId `56
    )
    ```
 
+   **f) Customer's NPS and feedback to Pendo:**
+
+   The pendo-internal subscription runs Pendo's own NPS and Listen programmes against its customers. These calls capture what THIS customer's employees have said about Pendo - in scope because the responses live in pendo-internal, not in the customer's own product.
+
+   - `npsScore` on subId `5668600916475904`, scoped to the customer's Pendo account ID. Returns promoter/passive/detractor breakdown and score for the window. Compare against the prior equivalent window to compute the delta.
+   - `get_feedback_items` on subId `5668600916475904`, scoped to the customer's Pendo account ID. Returns the verbatim feedback the customer's employees have submitted about Pendo over the window.
+   - `get_feedback_insights` for thematic grouping where available.
+
+   Scoping is by visitor metadata (typically `auto.accountid = {Pendo Account ID}`). If the Pendo MCP signature requires a different filter shape, pull the raw responses and filter by visitor account ID post-hoc. The key constraint: these calls are always against pendo-internal (subId `5668600916475904`), never against the customer's own sub.
+
 If the customer has multiple Pendo account IDs (e.g. multiple instances), report each separately in the Engagement section. Do not silently merge.
 
 #### Fail-fast at the end of Step 4
@@ -368,18 +378,33 @@ This is the strongest single signal of which modules are real vs paid-but-unused
 {Or, if no open CRE:}
 - No active CRE on this account.
 
-### Listen module usage
+### Customer's NPS of Pendo
 
-Tracks whether the customer is using Pendo's Listen module to capture feedback, not the feedback their end users have submitted.
+What this customer's employees have scored Pendo in the window. Sourced from pendo-internal (Pendo's own NPS programme), scoped to the customer's Pendo account ID.
+
+- Promoters: {N} | Passives: {N} | Detractors: {N} (total {N} responses)
+- NPS score: {score} ({delta vs prior period})
+
+{Or, if zero responses:} No NPS responses from this customer's employees in the last {N} days.
+
+### Customer's feedback to Pendo
+
+Verbatim feedback the customer's employees have submitted about Pendo. Sourced from pendo-internal Listen, scoped to the customer's Pendo account ID.
+
+{Top 3-5 feedback themes in window with volume and a representative verbatim, or "No feedback submitted in the last {N} days."}
+
+### Listen module usage (customer's own Listen programme)
+
+Whether the customer is using Pendo's Listen module to capture feedback inside their own product. Distinct from the section above (which is the customer's feedback to Pendo).
 
 - Listen admin features in employee top-features list: {yes/no, with feature names if yes}
 - Last admin engagement with Listen: {date or "no engagement in window"}
 
-{1 sentence: if Listen is entitled and no admin features appear, the module is paid-but-unused. Surface that.}
+{1 sentence: if Listen is entitled and no admin features appear, the module is paid-but-unused.}
 
-### Sentiment module usage
+### Sentiment module usage (customer's own Sentiment programme)
 
-Tracks whether the customer is using Pendo's Sentiment module (NPS, CSAT) to ask the question, not the answers their end users gave.
+Whether the customer is using Pendo's Sentiment module (NPS, CSAT) to ask their own users. Distinct from "Customer's NPS of Pendo" above.
 
 - NPS surveys published: {publishednpscount from pendo-internal metadata}
 - CSAT surveys published: {publishedcsatcount from pendo-internal metadata}
@@ -387,7 +412,7 @@ Tracks whether the customer is using Pendo's Sentiment module (NPS, CSAT) to ask
 
 {1 sentence interpretation. If both counts are zero, that is the finding: the Sentiment module is entitled but the customer isn't running a sentiment programme.}
 
-{1-2 sentence joint interpretation. Tie CRE + Listen/Sentiment module usage together where signals align (e.g. "Open CRE for adoption risk aligns with no Sentiment activity in the window; the customer has no live way of hearing from their users in Pendo").}
+{1-2 sentence joint interpretation. Tie CRE + the customer's own NPS of Pendo + their use of Listen/Sentiment modules together where signals align (e.g. "Open CRE for adoption risk aligns with three detractor responses and no Sentiment activity in the window").}
 
 ## 4. Current entitlements
 

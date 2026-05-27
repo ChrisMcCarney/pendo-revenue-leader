@@ -1,5 +1,12 @@
 # Release notes
 
+## 0.6.7
+
+Restore the customer's NPS and feedback *about Pendo* in `/account-health-plus`. v0.6.6 removed the npsScore and feedback calls when stripping out the customer-owned-sub path, which also lost the customer's sentiment toward Pendo. Those responses live in pendo-internal (not the customer's own sub) and are in scope.
+
+- Step 4 adds subsection (f): `npsScore` and `get_feedback_items` against pendo-internal (subId `5668600916475904`), scoped to the customer's Pendo account ID. Captures what this customer's employees have said about Pendo.
+- Section 3 of the report template adds two subsections: "Customer's NPS of Pendo" (promoter/passive/detractor breakdown and score) and "Customer's feedback to Pendo" (verbatim themes). The existing "Listen module usage" and "Sentiment module usage" subsections remain - they cover the customer's own programme inside their own product, which is a distinct signal.
+
 ## 0.6.6
 
 Tighten `/account-health-plus` scope to the customer's use of the Pendo application. The previous version pulled end-user data from the customer's own Pendo subscriptions as a secondary enrichment path; this version removes that path and grades adoption only on how the customer's employees use Pendo.
